@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="sound">
+      <UniqueIdentifier>{f92f5f45-a958-4ae3-a444-0118d063c374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{b1ec1da0-1dc5-4e4a-8c97-f148c515a953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script">
+      <UniqueIdentifier>{e2f870e2-d608-4ebd-a593-cbdf4d4a948f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system">
+      <UniqueIdentifier>{db6dc3e4-c91d-4e28-a805-026213bea9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{b53265ae-4297-4a1a-8847-aa8d9b78daf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\types">
+      <UniqueIdentifier>{a89309f8-120f-4254-96df-d2596d31aea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies">
+      <UniqueIdentifier>{e72f4cc2-5abe-45fb-85c7-ce8a3e98d7b8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\graphics\mesh.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphics\shader.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphics\texture.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphics\deferred.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\scene.hpp">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\object.hpp">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\reference.hpp">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\script.hpp">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\types\functions.hpp">
+      <Filter>script\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\types\scriptstdstring.h">
+      <Filter>script\types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sound\sound2d.hpp">
+      <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sound\sound3d.hpp">
+      <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sound\soundlistener.hpp">
+      <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\log.hpp">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\clock.hpp">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\engine.hpp" />
+    <ClInclude Include="include\graphics\graphics_device.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\script_device.hpp">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sound\sound_device.hpp">
+      <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphics\ui.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\config.hpp">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\filesystem.hpp">
+      <Filter>system</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="sources\graphics\mesh.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\graphics\shader.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\graphics\texture.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\graphics\deferred.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\scene\scene.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\scene\object.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\script\reference.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\script\script.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\script\types\scriptstdstring.cpp">
+      <Filter>script\types</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\script\types\functions.cpp">
+      <Filter>script\types</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\sound\sound3d.cpp">
+      <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\sound\soundlistener.cpp">
+      <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\sound\sound2d.cpp">
+      <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\system\clock.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\system\log.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp">
+      <Filter>dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui.cpp">
+      <Filter>dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui_draw.cpp">
+      <Filter>dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\graphics\grahpics_device.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\script\script_device.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\sound\sound_device.cpp">
+      <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_demo.cpp">
+      <Filter>dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\glad\src\glad.c">
+      <Filter>dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\graphics\ui.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\system\filesystem.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\system\config.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\graphics\camera.hpp">
+      <Filter>graphics</Filter>
+    </None>
+    <None Include="sources\graphics\camera.cpp">
+      <Filter>graphics</Filter>
+    </None>
+  </ItemGroup>
+</Project>
