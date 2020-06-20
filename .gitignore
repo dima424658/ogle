@@ -32,3 +32,5 @@
 
 # Visual Studio
 .vs
+dependencies/*
+build/*
