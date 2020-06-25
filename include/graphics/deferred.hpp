@@ -15,9 +15,12 @@ namespace Graphics
 
         void ResizeFramebuffer(int width, int height);
     
-        void Begin();
-        void End(const glm::vec3& cameraPosition);
+        void Prepare();
+        void Draw(const glm::vec3& cameraPosition);
+        void DrawToTexture(const glm::vec3& cameraPosition);
         
+        void Resize(int width, int height);
+
         CShader& GetShader();
     private:
         void InitScreen();
@@ -33,6 +36,8 @@ namespace Graphics
     private:
         int m_width, m_height;
         GLuint m_framebuffer, m_renderbuffer;
+        GLuint m_framebuffer2, m_textureScreen;
+
         GLuint m_texturePosition, m_texutreNormal, m_textureAlbedo;
 
         CShader m_gShader, m_diffuseShader;

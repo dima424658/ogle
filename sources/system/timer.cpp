@@ -5,9 +5,11 @@
 //      Author: Dmitry Pankov
 //
 
-#include "system/clock.hpp"
+#include "system/timer.hpp"
 
-Clock::Clock(std::chrono::milliseconds inDelay)
+using namespace System;
+
+CTimer::CTimer(std::chrono::milliseconds inDelay)
 {
     m_startTime = std::chrono::high_resolution_clock::now();
     m_delay = inDelay;
@@ -15,27 +17,35 @@ Clock::Clock(std::chrono::milliseconds inDelay)
     m_time = std::chrono::high_resolution_clock::now();
 }
 
-Clock::~Clock()
+CTimer::~CTimer()
 {
 }
 
-void Clock::Sync() noexcept
+void CTimer::Sync() noexcept
 {
-    std::this_thread::sleep_until(m_time + m_delay);
+    if(m_delay.count() != 0)
+        std::this_thread::sleep_until(m_time + m_delay);
+
     m_delta = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_time);
     m_time = std::chrono::high_resolution_clock::now();
 
     return;
 }
 
-void Clock::SetDelay(const std::chrono::milliseconds inDelay) noexcept
+void CTimer::SetDelay(const std::chrono::milliseconds inDelay) noexcept
 {
     m_delay = inDelay;
     
     return;
 }
 
-float Clock::GetDelta() noexcept
+float CTimer::GetDelta() noexcept
 {
     return static_cast<float>(m_delta.count()) / 1000;
+}
+
+CTimer& CTimer::Instance()
+{
+    static CTimer instance;
+    return instance;
 }

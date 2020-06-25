@@ -6,3 +6,27 @@
 //
 
 #pragma once
+
+#include <filesystem>
+
+namespace System
+{
+	enum class eResourceType
+	{
+		eImage, eVideo, eMesh
+	};
+
+	struct sResource
+	{
+		std::filesystem::directory_entry entry;
+		eResourceType type;
+	};
+
+	class CResourceManager
+	{
+	public:
+
+	private:
+
+	};
+};

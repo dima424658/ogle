@@ -1,4 +1,4 @@
-#include "script/script_device.hpp"
+#include "script/device.hpp"
 
 using namespace Script;
 

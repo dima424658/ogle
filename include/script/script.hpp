@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string_view>
 #include "system/log.hpp"
-#include "script/script_device.hpp"
+#include "script/device.hpp"
 
 namespace Script
 {

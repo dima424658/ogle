@@ -2,9 +2,9 @@
 
 using namespace Graphics;
 
-UI::UI(SDL_Window* window)
+UI::UI()
 {
-    m_window = window;
+    m_window = Graphics::CDevice::Instance().GetWindow();
     
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -15,8 +15,10 @@ UI::UI(SDL_Window* window)
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
     //io.ConfigViewportsNoAutoMerge = true;
     //io.ConfigViewportsNoTaskBarIcon = true;
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 3.0f));
 
-    ImGui::StyleColorsDark();
+    ImGui::StyleColorsClassic();
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -28,6 +30,7 @@ UI::UI(SDL_Window* window)
     // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
     // - Read 'docs/FONTS.txt' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
+    io.Fonts->AddFontFromFileTTF("data/fonts/Roboto-Medium.ttf", 16.0f);
     //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
@@ -155,6 +158,8 @@ void UI::NewFrame(float deltaTime)
 
 void UI::RenderDrawData()
 {
+    UpdateWindows();
+
     ImGui::Render();
 
     auto draw_data = ImGui::GetDrawData();
@@ -387,6 +392,42 @@ bool UI::ProcessEvent(const SDL_Event& event)
         }
     }
     return false;
+}
+
+UI& UI::Instance()
+{
+    static UI instance;
+    return instance;
+}
+
+void UI::CreateWindow(std::string name, window_cb callback)
+{
+    auto it = std::find_if(m_windows.begin(), m_windows.end(), [name](const std::pair<std::string, window_cb>& it) -> bool
+        {
+            return it.first.compare(name) == 0;
+        });
+
+    if (it == m_windows.end())
+        m_windows.push_back(std::make_pair(name, callback));
+}
+
+
+void UI::UpdateWindows()
+{
+    auto it = m_windows.begin();
+    while (it != m_windows.end())
+    {
+        bool result = it->second(it->first);
+        if (result)
+        {
+            auto oldit = it;
+            it++;
+            m_windows.erase(oldit);
+            continue;
+        }
+
+        it++;
+    }
 }
 
 void UI::UpdateMousePosAndButtons()

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sound/sound_device.hpp"
-#include "script/script_device.hpp"
+#include "sound/device.hpp"
+#include "script/device.hpp"
 #include "script/reference.hpp"
 
 namespace Sound
@@ -17,8 +17,12 @@ namespace Sound
 
         void Play();
         void Pause();
+
+        bool IsPlaying() const;
+
         void SetVolume(float &vol);
         float GetVolume();
+        std::string GetName();
 
     protected:
         FMOD::Sound* m_sound;

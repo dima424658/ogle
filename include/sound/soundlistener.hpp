@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sound/sound_device.hpp"
+#include "sound/device.hpp"
 
 namespace Sound
 {

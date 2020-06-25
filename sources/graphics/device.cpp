@@ -1,10 +1,9 @@
-#include "graphics/graphics_device.hpp"
+#include "graphics/device.hpp"
 
 using namespace Graphics;
 
-CDevice::CDevice()
+CDevice::CDevice(int width, int height)
 {    
-    int width = 1600, height = 900;
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error(std::string("Failed to initialize SDL2: ") + SDL_GetError());
 
@@ -27,7 +26,6 @@ CDevice::CDevice()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    glViewport(0, 0, 1600, 900);
 }
 
 CDevice::~CDevice()
@@ -64,6 +62,6 @@ const SDL_GLContext& CDevice::GetGLContext() const
 
 CDevice& CDevice::Instance()
 {
-    static CDevice instance;
+    static CDevice instance(1600, 900);
     return instance;
 }

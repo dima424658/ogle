@@ -12,8 +12,6 @@ CSound3D::CSound3D(const char* path, bool loop) : CSound2D(path, loop)
     
     result = m_sound->set3DMinMaxDistance(0.5f * g_distanceFactor, 5000.0f * g_distanceFactor);
 
-    result = CDevice::Instance().GetSystem()->playSound(m_sound, 0, false, &m_channel);
-
     result = m_channel->set3DAttributes(&m_position, &m_velocity);
 }
 

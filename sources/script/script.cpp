@@ -42,8 +42,9 @@ CScript::CScript(std::string_view path)
 void CScript::PrepareFunction(std::string_view decl)
 {
     int result;
+	
 	asIScriptModule* mod = CDevice::Instance().GetModule(0);
-
+	
 	//int a =mod->GetFunctionCount();
     asIScriptFunction* function = mod->GetFunctionByDecl("float calc(float, float)");
     if(!function)

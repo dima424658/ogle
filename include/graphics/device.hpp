@@ -16,7 +16,7 @@ namespace Graphics
     class CDevice
     {
     private:
-        CDevice();
+        CDevice(int width, int height);
         CDevice(const CDevice&) = delete;
         CDevice& operator=(CDevice&) = delete;
     public:
@@ -24,8 +24,6 @@ namespace Graphics
 
         void Begin();
         void End();
-
-        int WindowShouldClose();
 
         SDL_Window* GetWindow() const;
         const SDL_GLContext& GetGLContext() const;
@@ -36,10 +34,6 @@ namespace Graphics
     private:
         SDL_Window* m_window;
         SDL_GLContext m_context;
-
-        GLuint m_framebuffer, m_renderbuffer;
-        GLuint m_texturePosition, m_texutreNormal, m_textureAlbedo;
     };
 
-    static void callback(int code, const char* error);
 };

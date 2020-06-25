@@ -22,6 +22,9 @@
     <Filter Include="dependencies">
       <UniqueIdentifier>{e72f4cc2-5abe-45fb-85c7-ce8a3e98d7b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="graphics\UI">
+      <UniqueIdentifier>{70ef8e71-7dd2-441e-ae72-c5ce8466b29b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\graphics\mesh.hpp">
@@ -66,19 +69,7 @@
     <ClInclude Include="include\system\log.hpp">
       <Filter>system</Filter>
     </ClInclude>
-    <ClInclude Include="include\system\clock.hpp">
-      <Filter>system</Filter>
-    </ClInclude>
     <ClInclude Include="include\engine.hpp" />
-    <ClInclude Include="include\graphics\graphics_device.hpp">
-      <Filter>graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\script\script_device.hpp">
-      <Filter>script</Filter>
-    </ClInclude>
-    <ClInclude Include="include\sound\sound_device.hpp">
-      <Filter>sound</Filter>
-    </ClInclude>
     <ClInclude Include="include\graphics\ui.hpp">
       <Filter>graphics</Filter>
     </ClInclude>
@@ -86,6 +77,21 @@
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="include\system\filesystem.hpp">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphics\device.hpp">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\device.hpp">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sound\device.hpp">
+      <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\extensions.hpp">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\timer.hpp">
       <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
@@ -129,9 +135,6 @@
     <ClCompile Include="sources\sound\sound2d.cpp">
       <Filter>sound</Filter>
     </ClCompile>
-    <ClCompile Include="sources\system\clock.cpp">
-      <Filter>system</Filter>
-    </ClCompile>
     <ClCompile Include="sources\system\log.cpp">
       <Filter>system</Filter>
     </ClCompile>
@@ -143,15 +146,6 @@
     </ClCompile>
     <ClCompile Include="dependencies\imgui\imgui_draw.cpp">
       <Filter>dependencies</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\graphics\grahpics_device.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\script\script_device.cpp">
-      <Filter>script</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\sound\sound_device.cpp">
-      <Filter>sound</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_demo.cpp">
@@ -168,6 +162,24 @@
     </ClCompile>
     <ClCompile Include="sources\system\config.cpp">
       <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\graphics\device.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\script\device.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\sound\device.cpp">
+      <Filter>sound</Filter>
+    </ClCompile>
+    <ClCompile Include="include\graphics\ui\Editor.hpp">
+      <Filter>graphics\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\system\timer.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\graphics\UI\Editor.cpp">
+      <Filter>graphics\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

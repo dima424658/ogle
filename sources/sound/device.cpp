@@ -1,4 +1,4 @@
-#include "sound/sound_device.hpp"
+#include "sound/device.hpp"
 
 using namespace Sound;
 

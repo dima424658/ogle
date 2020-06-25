@@ -21,26 +21,27 @@
   <ItemGroup>
     <ClInclude Include="include\engine.hpp" />
     <ClInclude Include="include\system\config.hpp" />
+    <ClInclude Include="include\system\extensions.hpp" />
     <ClInclude Include="include\system\filesystem.hpp" />
     <None Include="include\graphics\camera.hpp" />
     <ClInclude Include="include\graphics\deferred.hpp" />
-    <ClInclude Include="include\graphics\graphics_device.hpp" />
+    <ClInclude Include="include\graphics\device.hpp" />
     <ClInclude Include="include\graphics\ui.hpp" />
     <ClInclude Include="include\graphics\mesh.hpp" />
     <ClInclude Include="include\graphics\shader.hpp" />
     <ClInclude Include="include\graphics\texture.hpp" />
     <ClInclude Include="include\scene\object.hpp" />
     <ClInclude Include="include\scene\scene.hpp" />
-    <ClInclude Include="include\script\script_device.hpp" />
+    <ClInclude Include="include\script\device.hpp" />
     <ClInclude Include="include\script\reference.hpp" />
     <ClInclude Include="include\script\script.hpp" />
     <ClInclude Include="include\script\types\functions.hpp" />
     <ClInclude Include="include\script\types\scriptstdstring.h" />
-    <ClInclude Include="include\sound\sound_device.hpp" />
+    <ClInclude Include="include\sound\device.hpp" />
     <ClInclude Include="include\sound\sound2d.hpp" />
     <ClInclude Include="include\sound\sound3d.hpp" />
     <ClInclude Include="include\sound\soundlistener.hpp" />
-    <ClInclude Include="include\system\clock.hpp" />
+    <ClInclude Include="include\system\timer.hpp" />
     <ClInclude Include="include\system\log.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -49,25 +50,27 @@
     <ClCompile Include="dependencies\imgui\imgui_demo.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="include\graphics\ui\Editor.hpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sources\graphics\UI\Editor.cpp" />
     <ClCompile Include="sources\scene\object.cpp" />
     <ClCompile Include="sources\scene\scene.cpp" />
-    <ClCompile Include="sources\script\script_device.cpp" />
+    <ClCompile Include="sources\script\device.cpp" />
     <ClCompile Include="sources\script\reference.cpp" />
     <ClCompile Include="sources\script\script.cpp" />
     <ClCompile Include="sources\script\types\functions.cpp" />
     <ClCompile Include="sources\script\types\scriptstdstring.cpp" />
-    <ClCompile Include="sources\sound\sound_device.cpp" />
+    <ClCompile Include="sources\sound\device.cpp" />
     <ClCompile Include="sources\sound\sound2d.cpp" />
     <ClCompile Include="sources\sound\sound3d.cpp" />
     <ClCompile Include="sources\sound\soundlistener.cpp" />
-    <ClCompile Include="sources\system\clock.cpp" />
+    <ClCompile Include="sources\system\timer.cpp" />
     <ClCompile Include="sources\system\config.cpp" />
     <ClCompile Include="sources\system\filesystem.cpp" />
     <ClCompile Include="sources\system\log.cpp" />
     <None Include="sources\graphics\camera.cpp" />
     <ClCompile Include="sources\graphics\deferred.cpp" />
-    <ClCompile Include="sources\graphics\grahpics_device.cpp" />
+    <ClCompile Include="sources\graphics\device.cpp" />
     <ClCompile Include="sources\graphics\ui.cpp" />
     <ClCompile Include="sources\graphics\mesh.cpp" />
     <ClCompile Include="sources\graphics\shader.cpp" />
@@ -79,6 +82,7 @@
     <ProjectGuid>{71e2b96c-af5d-4a27-87f5-211cc86f5fdc}</ProjectGuid>
     <RootNamespace>Project1</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ogle</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -130,24 +134,34 @@
     <IncludePath>$(ProjectDir)dependencies\angelscript\include;$(ProjectDir)dependencies\fmod\inc;$(ProjectDir)dependencies\glad\include;$(ProjectDir)dependencies\glm\include;$(ProjectDir)dependencies\imgui;$(ProjectDir)dependencies\SDL2\include;$(ProjectDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\angelscript\lib;$(ProjectDir)dependencies\SDL2\lib\x86;$(ProjectDir)dependencies\fmod\lib\x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <OutDir>$(SolutionDir)build\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir)dependencies\angelscript\include;$(ProjectDir)dependencies\fmod\inc;$(ProjectDir)dependencies\glad\include;$(ProjectDir)dependencies\glm\include;$(ProjectDir)dependencies\imgui;$(ProjectDir)dependencies\SDL2\include;$(ProjectDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\angelscript\lib;$(ProjectDir)dependencies\SDL2\lib\x86;$(ProjectDir)dependencies\fmod\lib\x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <OutDir>$(SolutionDir)build\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)dependencies\angelscript\include;$(ProjectDir)dependencies\fmod\inc;$(ProjectDir)dependencies\glad\include;$(ProjectDir)dependencies\glm\include;$(ProjectDir)dependencies\imgui;$(ProjectDir)dependencies\SDL2\include;$(ProjectDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\angelscript\lib;$(ProjectDir)dependencies\SDL2\lib\x64;$(ProjectDir)dependencies\fmod\lib\x86_64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <OutDir>$(SolutionDir)build\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir)dependencies\angelscript\include;$(ProjectDir)dependencies\fmod\inc;$(ProjectDir)dependencies\glad\include;$(ProjectDir)dependencies\glm\include;$(ProjectDir)dependencies\imgui;$(ProjectDir)dependencies\SDL2\include;$(ProjectDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\angelscript\lib;$(ProjectDir)dependencies\SDL2\lib\x64;$(ProjectDir)dependencies\fmod\lib\x86_64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <OutDir>$(SolutionDir)build\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -157,6 +171,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,6 +189,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,6 +207,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -208,6 +225,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

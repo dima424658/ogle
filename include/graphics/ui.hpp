@@ -6,23 +6,38 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include <graphics/graphics_device.hpp>
+#include <graphics/device.hpp>
 #include <graphics/shader.hpp>
 #include <imgui.h>
+
+#include <list>
+
+#undef CreateWindow
 
 namespace Graphics
 {
     class UI
     {
+        UI();
+        UI(const UI&) = delete;
+        UI& operator=(UI&) = delete;
     public:
-        UI(SDL_Window* window);
+        // returns true if needs to be closed
+        typedef std::function<bool(const std::string& name)> window_cb;
+
         ~UI();
         
         void NewFrame(float deltaTime);
         void RenderDrawData();
         bool ProcessEvent(const SDL_Event& event);
 
+        static UI& Instance();
+
+        void CreateWindow(std::string name, window_cb callback);
+
     private:
+        void UpdateWindows();
+
         void InitSDL2();
         void InitOGL();
         bool CreateDeviceObjects();
@@ -38,6 +53,8 @@ namespace Graphics
         static void SetClipboardText(void* user_data, const char* text);
 
     private:
+        std::list<std::pair<std::string, window_cb>> m_windows;
+
         SDL_Window* m_window;
         SDL_Cursor* m_mouseCursors[ImGuiMouseCursor_COUNT];
         bool m_mouseCanUseGlobalState = true;
