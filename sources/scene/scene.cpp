@@ -8,17 +8,28 @@ CScene::~CScene()
 {
 }
 
-void CScene::Update()
+void CScene::Update(const Graphics::CDeferred& shader)
 {
 	for (auto& el : m_objects)
 	{
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), el.GetPosition());
+		if (el.GetTexture())
+		{
+			el.GetTexture()->Use(GL_TEXTURE0);
+			shader.GetShader().Set("texture_diffuse1", 0);
+		}
+
+		shader.GetShader().Set("model", model);
+
 		el.Update();
+		glBindTexture(GL_TEXTURE0, 0);
 	}
 }
 
-void CScene::AddObject(const std::string& name, bool active)
+uint32_t CScene::AddObject(const std::string& name, bool active)
 {
 	m_objects.push_back(CObject(name, active));
+	return m_objects.back().GetID();
 }
 
 void CScene::DeleteObject(const std::string_view& name)
@@ -43,7 +54,7 @@ void CScene::DeleteObject(uint32_t id)
 	auto it = m_objects.begin();
 	while (it != m_objects.end())
 	{
-		if (!it->GetID() == id)
+		if (it->GetID() == id)
 		{
 			auto oldit = it;
 			it++;

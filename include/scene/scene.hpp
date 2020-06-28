@@ -3,8 +3,10 @@
 #undef GetObject
 
 #include <scene/object.hpp>
-
+#include <graphics/deferred.hpp>
 #include <list>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 class CScene
 {
@@ -12,9 +14,9 @@ public:
 	CScene();
 	~CScene();
 
-	void Update();
+	void Update(const Graphics::CDeferred& shader);
 
-	void AddObject(const std::string& name, bool active = true);
+	uint32_t AddObject(const std::string& name, bool active = true);
 
 	void DeleteObject(const std::string_view& name);
 	void DeleteObject(std::list<CObject>::const_iterator it);

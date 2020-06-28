@@ -45,7 +45,7 @@ void CDeferred::Draw(const glm::vec3& cameraPosition)
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, m_textureAlbedo);
 
-    m_diffuseShader.Set("lightPos", glm::vec3(2.0f, 2.0f, 2.0f));
+    m_diffuseShader.Set("lightPos", glm::vec3(4.0f, 4.0f, 4.0f));
     m_diffuseShader.Set("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     m_diffuseShader.Set("viewPos", cameraPosition);
     
@@ -191,7 +191,7 @@ void CDeferred::Resize(int width, int height)
 
 }
 
-CShader& CDeferred::GetShader()
+const CShader& CDeferred::GetShader() const
 {
     return m_gShader;
 }

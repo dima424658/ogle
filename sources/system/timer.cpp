@@ -32,16 +32,23 @@ void CTimer::Sync() noexcept
     return;
 }
 
-void CTimer::SetDelay(const std::chrono::milliseconds inDelay) noexcept
+void CTimer::SetDelay(std::chrono::milliseconds inDelay) noexcept
 {
-    m_delay = inDelay;
+    m_delay = std::move(inDelay);
     
+    return;
+}
+
+void CTimer::SetDelay(int inDelay) noexcept
+{
+    m_delay = std::chrono::milliseconds(inDelay);
+
     return;
 }
 
 float CTimer::GetDelta() noexcept
 {
-    return static_cast<float>(m_delta.count()) / 1000;
+    return static_cast<float>(m_delta.count() / 1000);
 }
 
 CTimer& CTimer::Instance()

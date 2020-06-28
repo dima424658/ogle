@@ -23,7 +23,8 @@ namespace System
         ~CTimer();
 
         void Sync() noexcept;
-        void SetDelay(const std::chrono::milliseconds inDelay) noexcept;
+        void SetDelay(std::chrono::milliseconds inDelay) noexcept;
+        void SetDelay(int inDelay) noexcept;
         float GetDelta() noexcept;
 
         static CTimer& Instance();
