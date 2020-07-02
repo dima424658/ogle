@@ -2,6 +2,10 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <tuple>
+
+#include <system/timer.hpp>
 
 namespace System
 {
@@ -12,12 +16,25 @@ namespace System
         CLog(const CLog&) = delete;  
         CLog& operator=(CLog&) = delete;
 
+        static CLog& Instance();
+
         template<typename T>
         void SendToStreams(T value);
 
     public:
+        enum class SType
+        {
+            Warning, Error, Log
+        };
+
+        using message_t = std::tuple<SType, float, std::string>;
         ~CLog();
-        static CLog& Instance();
+
+        static CLog& Log();
+        static CLog& Error();
+        static CLog& Warning();
+        static const std::vector<message_t>& GetMessages();
+        static void ClearMessages();
 
         CLog& operator<< (const char*) noexcept;
         CLog& operator<< (char) noexcept;
@@ -30,8 +47,12 @@ namespace System
 
     private:
         std::fstream m_fstream;
+        std::vector<message_t> m_messages;
     };
 
     System::CLog& Log();
+    System::CLog& Error();
+    System::CLog& Warning();
+
     void Exit();
 };

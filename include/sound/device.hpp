@@ -32,6 +32,11 @@ namespace Sound
         FMOD::Channel* m_channel;
         unsigned int m_version;
     };
+
+    inline CDevice& GetSound()
+    {
+        return CDevice::Instance();
+    }
 };
 
 inline FMOD_VECTOR operator+(const FMOD_VECTOR& l, const FMOD_VECTOR& r)

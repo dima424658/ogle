@@ -4,19 +4,26 @@
 #include <random>
 
 #include <script/script.hpp>
+
 #include <sound/sound3d.hpp>
 #include <sound/sound2d.hpp>
+
 #include <graphics/mesh.hpp>
-#include <graphics/texture.hpp>
+#include <graphics/material.hpp>
+
+#include <scene/camera.hpp>
 
 #include <system/timer.hpp>
+
+#include <glm/gtc/type_ptr.hpp>
 
 #undef LoadImage
 
 class CObject
 {
 public:
-	CObject(const std::string& name, bool active = true);
+	// TODO спрятать установку кастомного id в private секцию.
+	CObject(const std::string& name, bool active = true, uint32_t id = 0);
 	~CObject();
 	uint32_t GetID() const;
 
@@ -37,9 +44,13 @@ public:
 	void DestroyMesh();
 	Graphics::CMesh* GetMesh() const;
 
-	void CreateTexture(Graphics::CTexture* c);
-	void DestroyTexture();
-	Graphics::CTexture* GetTexture() const;
+	void CreateMaterial(Graphics::CMaterial* c);
+	void DestroyMaterial();
+	Graphics::CMaterial* GetMaterial() const;
+
+	void CreateCamera(CCamera* c);
+	void DestroyCamera();
+	CCamera* GetCamera() const;
 
 	void Update();
 
@@ -51,7 +62,8 @@ private:
 	
 	Sound::CSound2D* m_sound2d = nullptr;
 	Sound::CSound3D* m_sound3d = nullptr;
-	Graphics::CTexture* m_texture = nullptr;
+	Graphics::CMaterial* m_material = nullptr;
 	Graphics::CMesh* m_mesh = nullptr;
+	CCamera* m_camera = nullptr;
 
 };

@@ -30,7 +30,21 @@ UI::UI()
     // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
     // - Read 'docs/FONTS.txt' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    io.Fonts->AddFontFromFileTTF("data/fonts/Roboto-Medium.ttf", 16.0f);
+    
+    ImFontConfig font_config;
+    font_config.OversampleH = 1; //or 2 is the same
+    font_config.OversampleV = 1;
+    font_config.PixelSnapH = 1;
+
+    static const ImWchar ranges[] =
+    {
+        0x0020, 0x00FF, // Basic Latin + Latin Supplement
+        0x0400, 0x044F, // Cyrillic
+        0,
+    };
+
+    io.Fonts->AddFontFromFileTTF("data/fonts/Roboto-Medium.ttf", 16.0f, &font_config, ranges);
+
     //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
@@ -144,8 +158,8 @@ void UI::NewFrame(float deltaTime)
         io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
 
     // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
-    static Uint64 frequency = SDL_GetPerformanceFrequency();
-    Uint64 current_time = SDL_GetPerformanceCounter();
+    //static Uint64 frequency = SDL_GetPerformanceFrequency();
+    //Uint64 current_time = SDL_GetPerformanceCounter();
     io.DeltaTime = deltaTime;
 
     UpdateMousePosAndButtons();

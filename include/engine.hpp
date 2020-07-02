@@ -11,9 +11,11 @@
 #include "graphics/mesh.hpp"
 #include "graphics/texture.hpp"
 #include "graphics/ui.hpp"
+#include "graphics/ui/editor.hpp"
 
 #include "system/log.hpp"
 #include "system/timer.hpp"
+#include "system/input.hpp"
 
 #include "sound/device.hpp"
 #include "sound/sound2d.hpp"
@@ -25,31 +27,8 @@
 #include "script/script.hpp"
 #include "script/types/functions.hpp"
 #include "script/types/scriptstdstring.h"
+#include "script/types/glm_as.hpp"
 
 #include "scene/object.hpp"
 #include "scene/scene.hpp"
-
-inline Graphics::CDevice& GetGraphics()
-{
-	return Graphics::CDevice::Instance();
-}
-
-inline Sound::CDevice& GetSound()
-{
-	return Sound::CDevice::Instance();
-}
-
-inline Script::CDevice& GetScript()
-{
-	return Script::CDevice::Instance();
-}
-
-inline System::CTimer& GetTimer()
-{
-	return System::CTimer::Instance();
-}
-
-inline Graphics::UI& GetUI()
-{
-	return Graphics::UI::Instance();
-}
+#include "scene/camera.hpp"

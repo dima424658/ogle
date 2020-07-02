@@ -48,7 +48,12 @@ void CTimer::SetDelay(int inDelay) noexcept
 
 float CTimer::GetDelta() noexcept
 {
-    return static_cast<float>(m_delta.count() / 1000);
+    return static_cast<float>(m_delta.count()) / 1000;
+}
+
+float CTimer::GetTime() noexcept
+{
+    return static_cast<float>((std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_startTime)).count()) / 1000;
 }
 
 CTimer& CTimer::Instance()

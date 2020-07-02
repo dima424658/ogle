@@ -11,7 +11,7 @@ CSoundListener::CSoundListener()
     result = CDevice::Instance().GetSystem()->set3DSettings(1.0, g_distanceFactor, 1.0f);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to initialize FMOD listener\n";
+        System::Error() << "Failed to initialize FMOD listener: " << Sound::Error(result);
         System::Exit();
     }
 
@@ -32,7 +32,7 @@ void CSoundListener::Update(float deltaTime, FMOD_VECTOR position)
     result = CDevice::Instance().GetSystem()->set3DListenerAttributes(0, &m_position, &m_velocity, &m_forward, &m_up);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to update FMOD listener\n";
+        System::Error() << "Failed to update FMOD listener: " << Sound::Error(result);
         System::Exit();
     }
 }

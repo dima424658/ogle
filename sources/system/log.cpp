@@ -23,11 +23,60 @@ CLog& CLog::Instance()
     return instance;
 }    
 
+CLog& CLog::Log() // TODO сделать вменяемые логи в кои-то веке
+{
+    CLog::Instance().m_messages.push_back(std::make_tuple(SType::Log, GetTimer().GetTime(), std::string("")));
+
+    CLog::Instance().m_fstream << "\n";
+    std::cout << "\n";
+
+    return CLog::Instance();
+}
+
+CLog& CLog::Error()
+{
+    CLog::Instance().m_messages.push_back(std::make_tuple(SType::Error, GetTimer().GetTime(), std::string("")));
+
+    CLog::Instance().m_fstream << "\n";
+    std::cout << "\n";
+    
+    return CLog::Instance();
+}
+
+CLog& CLog::Warning()
+{
+    CLog::Instance().m_messages.push_back(std::make_tuple(SType::Warning, GetTimer().GetTime(), std::string("")));
+
+    CLog::Instance().m_fstream << "\n";
+    std::cout << "\n";
+
+    return CLog::Instance();
+}
+
+const std::vector<CLog::message_t>& CLog::GetMessages()
+{
+    return CLog::Instance().m_messages;
+}
+
+
+void CLog::ClearMessages()
+{
+    CLog::Instance().m_messages.clear();
+}
+
 template<typename T>
 void CLog::SendToStreams(T value)
 {
     m_fstream << value;
     std::cout << value;
+    
+    if(m_messages.size() > 0)
+    {
+        auto str = std::get<2>(m_messages[m_messages.size() - 1]);
+        str += value;
+        std::get<2>(m_messages[m_messages.size() - 1]) = str;
+    }
+
     return;
 }
 
@@ -80,5 +129,15 @@ void CLog::Write(std::string& value) noexcept
 
 System::CLog& System::Log()
 {
-    return CLog::Instance();
+    return CLog::Log();
+}
+
+System::CLog& System::Error()
+{
+    return CLog::Error();
+}
+
+System::CLog& System::Warning()
+{
+    return CLog::Warning();
 }

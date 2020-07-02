@@ -8,7 +8,9 @@
 
 #include <graphics/device.hpp>
 #include <graphics/shader.hpp>
+
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
 
 #include <list>
 
@@ -34,7 +36,6 @@ namespace Graphics
         static UI& Instance();
 
         void CreateWindow(std::string name, window_cb callback);
-
     private:
         void UpdateWindows();
 
@@ -68,4 +69,9 @@ namespace Graphics
         int         m_attribLocationVtxPos, m_attribLocationVtxUV, m_attribLocationVtxColor; // Vertex attributes location
         GLuint      m_vboHandle, m_elementsHandle;
     };
+
+    inline UI& GetUI()
+    {
+        return UI::Instance();
+    }
 };

@@ -4,7 +4,12 @@
 
 #include <scene/object.hpp>
 #include <graphics/deferred.hpp>
+#include <graphics/ui.hpp>
+#include <system/input.hpp>
+
 #include <list>
+#include <algorithm>
+#include <queue>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -14,7 +19,8 @@ public:
 	CScene();
 	~CScene();
 
-	void Update(const Graphics::CDeferred& shader);
+	void Update();
+	void Draw(Graphics::CDeferred& shader);
 
 	uint32_t AddObject(const std::string& name, bool active = true);
 
@@ -28,5 +34,8 @@ public:
 
 	const std::list<CObject>& GetObjects() const;
 private:
+	std::vector<CObject*> m_drawQueue;
+	std::vector<CObject*> m_cameraQueue;
+
 	std::list<CObject> m_objects;
 };

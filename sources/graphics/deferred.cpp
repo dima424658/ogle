@@ -3,7 +3,7 @@
 using namespace Graphics;
 
 CDeferred::CDeferred(int width, int height)
-    : m_gShader("shaders/gbuffer.vs", "shaders/gbuffer.fs"), m_diffuseShader("shaders/diffuse.vs", "shaders/diffuse.fs"), m_width(width), m_height(height)
+    : m_width(width), m_height(height), m_gShader("shaders/gbuffer.vs", "shaders/gbuffer.fs"), m_diffuseShader("shaders/diffuse.vs", "shaders/diffuse.fs")
 {
     m_textureAlbedo = 0;
     m_texturePosition = 0;
@@ -22,14 +22,14 @@ CDeferred::~CDeferred()
     DestroyRenderbuffer();
 }
 
-void CDeferred::Prepare()
+void CDeferred::Prepare() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_gShader.Use();
 }
 
-void CDeferred::Draw(const glm::vec3& cameraPosition)
+void CDeferred::Draw(const glm::vec3& cameraPosition) const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -52,12 +52,37 @@ void CDeferred::Draw(const glm::vec3& cameraPosition)
     RenderScreen();
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_framebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
-        // blit to default framebuffer. Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
-        // the internal formats are implementation defined. This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
-        // depth buffer in another shader stage (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+GLuint CDeferred::DrawToTexture(const glm::vec3& cameraPosition) const
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, m_finalbuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    m_diffuseShader.Use();
+    m_diffuseShader.Set("gPosition", 0);
+    m_diffuseShader.Set("gNormal", 1);
+    m_diffuseShader.Set("gAlbedoSpec", 2);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texturePosition);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_texutreNormal);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_textureAlbedo);
+
+    m_diffuseShader.Set("lightPos", glm::vec3(4.0f, 4.0f, 4.0f));
+    m_diffuseShader.Set("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    m_diffuseShader.Set("viewPos", cameraPosition);
+
+    RenderScreen();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return m_finalTexture;
 }
 
 void CDeferred::InitScreen()
@@ -83,7 +108,7 @@ void CDeferred::InitScreen()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 }
 
-void CDeferred::RenderScreen()
+void CDeferred::RenderScreen() const
 {
     glBindVertexArray(m_screenVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -112,6 +137,12 @@ void CDeferred::ResizeFramebuffer(int width, int height)
     glBindTexture(GL_TEXTURE_2D, m_textureAlbedo);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glBindTexture(GL_TEXTURE_2D, 0);
+    
+    // Finalbuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, m_finalbuffer);
+
+    glBindTexture(GL_TEXTURE_2D, m_finalTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -146,7 +177,21 @@ void CDeferred::ConfigureFramebuffer(int width, int height)
 
     constexpr GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     glDrawBuffers(3, attachments);
+    // Finalbuffer
+    glGenFramebuffers(1, &m_finalbuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_finalbuffer);
 
+    glGenTextures(1, &m_finalTexture);
+    glBindTexture(GL_TEXTURE_2D, m_finalTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_finalTexture, 0);
+
+    glDrawBuffers(1, attachments);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -158,9 +203,11 @@ void CDeferred::ConfigureRenderbuffer(int width, int height)
     glBindRenderbuffer(GL_RENDERBUFFER, m_renderbuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_renderbuffer);
+    //glBindFramebuffer(GL_FRAMEBUFFER, m_finalbuffer);
+    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_renderbuffer);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        System::Log() << "OpenGL framebuffer incomplete.\n";
+        System::Warning() << "OpenGL framebuffer incomplete.";
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -177,6 +224,9 @@ void CDeferred::DestroyFramebuffer()
     glDeleteTextures(1, &m_texturePosition);
     glDeleteTextures(1, &m_texutreNormal);
     glDeleteTextures(1, &m_textureAlbedo);
+    // Finalbuffer
+    glDeleteFramebuffers(1, &m_finalbuffer);
+    glDeleteTextures(1, &m_finalTexture);
 }
 
 void CDeferred::Resize(int width, int height)
@@ -188,7 +238,6 @@ void CDeferred::Resize(int width, int height)
 
     m_width = width;
     m_height = height;
-
 }
 
 const CShader& CDeferred::GetShader() const

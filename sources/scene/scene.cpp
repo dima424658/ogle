@@ -1,4 +1,4 @@
-#include "..\..\include\scene\scene.hpp"
+#include <scene/scene.hpp>
 
 CScene::CScene()
 {
@@ -8,11 +8,11 @@ CScene::~CScene()
 {
 }
 
-void CScene::Update(const Graphics::CDeferred& shader)
+void CScene::Update()
 {
 	for (auto& el : m_objects)
 	{
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), el.GetPosition());
+		/*glm::mat4 model = glm::translate(glm::mat4(1.0f), el.GetPosition());
 		if (el.GetTexture())
 		{
 			el.GetTexture()->Use(GL_TEXTURE0);
@@ -20,10 +20,102 @@ void CScene::Update(const Graphics::CDeferred& shader)
 		}
 
 		shader.GetShader().Set("model", model);
-
+		*/
 		el.Update();
-		glBindTexture(GL_TEXTURE0, 0);
+
+		if(el.GetCamera())
+			m_cameraQueue.push_back(&el);
+			
+		if(el.GetMesh())
+			m_drawQueue.push_back(&el);
+		
 	}
+}
+
+void CScene::Draw(Graphics::CDeferred& def)
+{
+	for(auto cameraObject : m_cameraQueue)
+	{
+		auto camera = cameraObject->GetCamera();
+		auto name = std::string("camera##") + std::to_string(cameraObject->GetID());
+
+        static bool show_camera = true;
+    	ImGui::SetNextWindowSizeConstraints(ImVec2(300, 300), ImVec2(FLT_MAX, FLT_MAX));
+        if (ImGui::Begin(name.c_str(), &show_camera, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_DockNodeHost))
+        {
+            camera->SetRenderSize(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 40);
+			
+            if(ImGui::IsWindowHovered())
+            {
+                if (System::GetInput().IsMousePressed(SDL_BUTTON_MIDDLE))
+                {
+                    if (System::GetInput().IsKeyPressed(SDL_SCANCODE_LCTRL))
+                        camera->UpdateZoom({System::GetInput().GetMouseDelta().first, System::GetInput().GetMouseDelta().second});
+                    else if (System::GetInput().IsKeyPressed(SDL_SCANCODE_LSHIFT))
+                        camera->UpdatePan({System::GetInput().GetMouseDelta().first, System::GetInput().GetMouseDelta().second});
+                    else
+                        camera->UpdateRotate({System::GetInput().GetMouseDelta().first, System::GetInput().GetMouseDelta().second});
+                }
+            }
+
+            def.Prepare();
+
+            //def.GetShader().Set("texture_diffuse1", 0);
+            //texture.Use(GL_TEXTURE0);
+
+            //def.GetShader().Set("texture_specular1", 1);
+            //textureSpec.Use(GL_TEXTURE1);
+            
+            def.GetShader().Set("projection", camera->GetProjection());
+            def.GetShader().Set("view", camera->GetView());
+			
+			for(auto mesh : m_drawQueue)
+			{
+            	def.GetShader().Set("model", glm::translate(glm::mat4(1.0f), mesh->GetPosition()));
+				
+				if(mesh->GetMaterial())
+				{
+					def.GetShader().Set("color_diffuse", mesh->GetMaterial()->GetDiffuseColor());
+					if(mesh->GetMaterial()->GetDiffuse())
+					{
+						def.GetShader().Set("has_diffuse", true);
+            			def.GetShader().Set("texture_diffuse", 0);
+						mesh->GetMaterial()->GetDiffuse()->Use(GL_TEXTURE0);
+					}
+					else
+						def.GetShader().Set("has_diffuse", false);
+
+					def.GetShader().Set("power_specular", mesh->GetMaterial()->GetSpecularPower());
+					if(mesh->GetMaterial()->GetSpecular())
+					{
+						def.GetShader().Set("has_specular", true);
+            			def.GetShader().Set("texture_specular", 0);
+						mesh->GetMaterial()->GetDiffuse()->Use(GL_TEXTURE1);
+					}
+					else
+						def.GetShader().Set("has_specular", false);
+				}
+				else
+				{
+					def.GetShader().Set("has_diffuse", false);
+					def.GetShader().Set("has_specular", false);
+					def.GetShader().Set("color_diffuse", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+					def.GetShader().Set("power_specular", 1.0f);
+				}
+				mesh->GetMesh()->Draw();
+			}
+			
+            camera->Update();
+            
+            def.Resize(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 40);
+            GLuint texture = def.DrawToTexture(camera->GetPosition());
+            ImGui::Image((void*)(intptr_t)texture, ImVec2(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 40));
+        }
+        ImGui::End();
+	}
+
+	m_cameraQueue.clear();
+	m_drawQueue.clear();
 }
 
 uint32_t CScene::AddObject(const std::string& name, bool active)

@@ -26,6 +26,7 @@ namespace System
         void SetDelay(std::chrono::milliseconds inDelay) noexcept;
         void SetDelay(int inDelay) noexcept;
         float GetDelta() noexcept;
+        float GetTime() noexcept;
 
         static CTimer& Instance();
 
@@ -35,4 +36,9 @@ namespace System
         std::chrono::microseconds m_delta;
         std::chrono::milliseconds m_delay;
     };
+
+    inline CTimer& GetTimer()
+    {
+        return CTimer::Instance();
+    }
 }

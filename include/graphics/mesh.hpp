@@ -10,6 +10,8 @@
 #include <vector>
 #include <iostream>
 
+#include <system/log.hpp>
+
 namespace Graphics
 {
     class CMesh

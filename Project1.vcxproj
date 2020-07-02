@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\engine.hpp" />
+    <ClInclude Include="include\scene\camera.hpp" />
     <ClInclude Include="include\system\config.hpp" />
     <ClInclude Include="include\system\extensions.hpp" />
     <ClInclude Include="include\system\filesystem.hpp" />
-    <None Include="include\graphics\camera.hpp" />
     <ClInclude Include="include\graphics\deferred.hpp" />
     <ClInclude Include="include\graphics\device.hpp" />
     <ClInclude Include="include\graphics\ui.hpp" />
@@ -53,6 +53,7 @@
     <ClCompile Include="include\graphics\ui\Editor.hpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sources\graphics\UI\Editor.cpp" />
+    <ClCompile Include="sources\scene\camera.cpp" />
     <ClCompile Include="sources\scene\object.cpp" />
     <ClCompile Include="sources\scene\scene.cpp" />
     <ClCompile Include="sources\script\device.cpp" />
@@ -68,7 +69,6 @@
     <ClCompile Include="sources\system\config.cpp" />
     <ClCompile Include="sources\system\filesystem.cpp" />
     <ClCompile Include="sources\system\log.cpp" />
-    <None Include="sources\graphics\camera.cpp" />
     <ClCompile Include="sources\graphics\deferred.cpp" />
     <ClCompile Include="sources\graphics\device.cpp" />
     <ClCompile Include="sources\graphics\ui.cpp" />

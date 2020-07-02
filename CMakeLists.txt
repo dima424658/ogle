@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(Engine)
+project(ogle)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,6 +11,7 @@ add_definitions(-pthread -Wall -g -D_DEBUG -m64)
 
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/angelscript/include)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/fmod/inc)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
@@ -30,8 +31,10 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/sources/system)
 add_subdirectory(${CMAKE_SOURCE_DIR}/sources/sound)
 add_subdirectory(${CMAKE_SOURCE_DIR}/sources/script)
 add_subdirectory(${CMAKE_SOURCE_DIR}/sources/graphics)
+add_subdirectory(${CMAKE_SOURCE_DIR}/sources/scene)
 
 target_link_libraries(${PROJECT_NAME} sound)
 target_link_libraries(${PROJECT_NAME} script)
 target_link_libraries(${PROJECT_NAME} system)
 target_link_libraries(${PROJECT_NAME} graphics)
+target_link_libraries(${PROJECT_NAME} scene)

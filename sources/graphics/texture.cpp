@@ -7,7 +7,7 @@ CTexture::CTexture()
     LoadDefault();
 }
 
-CTexture::CTexture(const std::string& path)
+CTexture::CTexture(std::string_view path)
 {
     LoadImage(path);
 }
@@ -56,14 +56,14 @@ CTexture::~CTexture()
     }
 }
 
-void CTexture::LoadImage(const std::string& path)
+void CTexture::LoadImage(std::string_view path)
 {
     this->~CTexture();
 
-    SDL_Surface* surface = IMG_Load(path.c_str());
+    SDL_Surface* surface = IMG_Load(path.data());
     if (!surface)
     {
-        System::Log() << "Failed to load image \"" << path << "\": " << IMG_GetError() << ". Setting default\n";
+        System::Warning() << "Failed to load image \"" << path << "\": " << IMG_GetError() << ". Setting default";
         LoadDefault();
         return;
     }
@@ -74,7 +74,7 @@ void CTexture::LoadImage(const std::string& path)
         m_format = GL_RGBA;
     else
     {
-        System::Log() << "Failed to determinate image format \"" << path << "\": " << IMG_GetError() << ". Setting default\n";
+        System::Warning() << "Failed to determinate image format \"" << path << "\": " << IMG_GetError() << ". Setting default";
         SDL_FreeSurface(surface);
         LoadDefault();
         return;
@@ -101,7 +101,10 @@ void CTexture::LoadDefault()
     SDL_Surface* surface = IMG_Load_RW(rwops, 0);
     SDL_FreeRW(rwops);
     if (!surface)
-        throw std::runtime_error("Failed to load default image\n");
+    {
+        System::Error() << "Failed to load default image.";
+        System::Exit();
+    }
 
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
@@ -114,13 +117,13 @@ void CTexture::LoadDefault()
     SDL_FreeSurface(surface);
 }
 
-void CTexture::Use(GLenum index)
+void CTexture::Use(GLenum index) const
 {
     glActiveTexture(index);
     glBindTexture(GL_TEXTURE_2D, m_id);
 }
 
-GLuint Graphics::CTexture::GetID()
+GLuint Graphics::CTexture::GetID() const
 {
     return m_id;
 }

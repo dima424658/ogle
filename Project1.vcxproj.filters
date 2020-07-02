@@ -94,6 +94,9 @@
     <ClInclude Include="include\system\timer.hpp">
       <Filter>system</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\camera.hpp">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\graphics\mesh.cpp">
@@ -181,13 +184,8 @@
     <ClCompile Include="sources\graphics\UI\Editor.cpp">
       <Filter>graphics\UI</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="include\graphics\camera.hpp">
-      <Filter>graphics</Filter>
-    </None>
-    <None Include="sources\graphics\camera.cpp">
-      <Filter>graphics</Filter>
-    </None>
+    <ClCompile Include="sources\scene\camera.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,24 +10,21 @@ CSound2D::CSound2D(const char* path, bool loop)
     
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to initialize FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to initialize FMOD sound: " << Sound::Error(result);
         System::Exit();
     }
 
     result = m_sound->setMode(loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to set mode of FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to set mode of FMOD sound: " << Sound::Error(result);
         System::Exit();
     }  
 
     result = CDevice::Instance().GetSystem()->playSound(m_sound, 0, false, &m_channel);
     if (result != FMOD_OK)
     {
-        System::Log() << "Failed to play FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to play FMOD sound: " << Sound::Error(result);
         System::Exit();
     }
 
@@ -42,8 +39,7 @@ void CSound2D::Play()
     result = m_channel->setPaused(false);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to play FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to play FMOD sound: " << Sound::Error(result);
         System::Exit();
     }  
 }
@@ -55,8 +51,7 @@ void CSound2D::Pause()
     result = m_channel->setPaused(true);
     if (result != FMOD_OK)
     {
-        System::Log() << "Failed to pause FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to pause FMOD sound: " << Sound::Error(result);
         System::Exit();
     }
 }
@@ -75,8 +70,7 @@ CSound2D::~CSound2D()
     result = m_sound->release();
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to initialize FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to initialize FMOD sound: " << Sound::Error(result);
         System::Exit();
     }
 }
@@ -106,8 +100,7 @@ void CSound2D::SetVolume(float &vol)
     result = m_channel->setVolume(m_volume);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to set volume of FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to set volume of FMOD sound\n" << Sound::Error(result);
         System::Exit();
     }
 }
@@ -118,8 +111,7 @@ float CSound2D::GetVolume()
     result = m_channel->getVolume(&m_volume);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to get volume of FMOD sound\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to get volume of FMOD sound: " << Sound::Error(result);
         System::Exit();
     }
 

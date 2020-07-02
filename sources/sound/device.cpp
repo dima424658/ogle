@@ -10,36 +10,34 @@ CDevice::CDevice()
     result = FMOD::System_Create(&m_system);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to create FMOD system\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to create FMOD system: "
+        << Sound::Error(result);
         System::Exit();
     }
 
     result = m_system->getVersion(&m_version);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to get FMOD version\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to get FMOD version: "
+        << Sound::Error(result);
         System::Exit();
     }
 
-    version = static_cast<char*>(malloc(sizeof(char) * 50));
+    version = static_cast<char*>(malloc(sizeof(char) * 50)); // TODO: утечка
     snprintf(version, 10, "%x", m_version);
-    System::Log() << "Initialized FMOD version " << version << '\n';
+    System::Log() << "Initialized FMOD version " << version;
 
     if (m_version < FMOD_VERSION)
     {
-        System::Log() << "FMOD library version " << version << " doesn't match header version ";
-        snprintf(version, 10, "%x", FMOD_VERSION);
-        System::Log() << version << ".\n";
+        System::Error() << "FMOD library version " << version << " doesn't match header version.";
         System::Exit();
     }
 
     result = m_system->init(32, FMOD_INIT_NORMAL, nullptr);
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to initialize FMOD system\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to initialize FMOD system: "
+        << Sound::Error(result);
         System::Exit();
     }
     
@@ -54,16 +52,16 @@ CDevice::~CDevice()
     result = m_system->close();
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to close FMOD system\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to close FMOD system: "
+        << Sound::Error(result);
         System::Exit();
     }
 
     result = m_system->release();
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to release FMOD system\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to release FMOD system: "
+        << Sound::Error(result);
         System::Exit();
     }
 }
@@ -74,8 +72,8 @@ void CDevice::Update()
     result = m_system->update();
     if(result != FMOD_OK)
     {
-        System::Log() << "Failed to update FMOD system state\n";
-        System::Log() << Sound::Error(result) << '\n';
+        System::Error() << "Failed to update FMOD system state: "
+        << Sound::Error(result);
         System::Exit();
     }
 

@@ -7,27 +7,24 @@ CDevice::CDevice()
     m_engine = asCreateScriptEngine();
     if(m_engine == nullptr)
 	{
-		System::Log() << "Failed to create script engine.\n";
+		System::Error() << "Failed to create script engine."; // TODO
 		System::Exit();
 	}
 
 	m_engine->SetMessageCallback(asFUNCTION(Script::MessageCallback), 0, asCALL_CDECL);
-
-	RegisterStdString(m_engine);
-    RegisterFunctions(m_engine);
-
+    
     m_context = m_engine->CreateContext();
     if(!m_context)
     {
-		System::Log() << "Failed to create script context.\n";
+		System::Error() << "Failed to create script context.";
 		System::Exit();
     }
 
     m_module = m_engine->GetModule(0, asGM_ALWAYS_CREATE);
     if(!m_module)
     {
-		    System::Log() << "Failed to get script module.\n";
-		    System::Exit();
+        System::Error() << "Failed to get script module.";
+        System::Exit();
     }
 }
 
@@ -61,13 +58,12 @@ CDevice& CDevice::Instance()
 
 void Script::MessageCallback(const asSMessageInfo *msg, void *param)
 {
-	const char* type = "ERROR ";
 	if( msg->type == asMSGTYPE_WARNING ) 
-		type = "WARNING";
+        System::Warning() << "AngelScript: " << msg->section << " (" << msg->row << " : " << msg->col << ") : " << msg->message;
 	else
     if( msg->type == asMSGTYPE_INFORMATION ) 
-		type = "INFO";
+        System::Log() << "AngelScript: " << msg->section << " (" << msg->row << " : " << msg->col << ") : " << msg->message;
+    else
+        System::Error() << "AngelScript: " << msg->section << " (" << msg->row << " : " << msg->col << ") : " << msg->message;
 
-    System::Log() << "AngelScript message:\n";
-    System::Log() << msg->section << " (" << msg->row << " : " << msg->col << ") : " << type << " : " << msg->message << '\n';
 }

@@ -10,10 +10,9 @@ CScript::CScript(std::string_view path)
     {
         fileStream.open(path.data());
     }
-    catch(const std::exception& e)
+    catch(const std::exception& e)  // TODO: сделать пустой скрипт и не вылетать.
     {
-        System::Log() << "Failed to open script file: " << path << '\n';
-        System::Log() << "Error: " << e.what() << '\n';
+        System::Error() << "Failed to open script file: " << path << '\n' << "Error: " << e.what();
         System::Exit();
     }
 
@@ -22,16 +21,16 @@ CScript::CScript(std::string_view path)
     int result;
 	asIScriptModule* mod = CDevice::Instance().GetModule(0);
 	result = mod->AddScriptSection("script", content.data(), content.size());
-	if( result < 0 ) 
+	if( result < 0 ) // TODO
 	{
-        System::Log() << "Module AddScriptSection() failed." << '\n';
+        System::Error() << "Module AddScriptSection() failed.";
         System::Exit();
 	}
 
     result = mod->Build();
 	if( result < 0 ) 
 	{
-        System::Log() << "Module Build() failed." << '\n';
+        System::Error() << "Module Build() failed." << '\n';
         System::Exit();
     }
 
@@ -49,14 +48,14 @@ void CScript::PrepareFunction(std::string_view decl)
     asIScriptFunction* function = mod->GetFunctionByDecl("float calc(float, float)");
     if(!function)
     {
-        System::Log() << "Could not find function " << decl << '\n';
+        System::Error() << "Could not find function " << decl;
         System::Exit();
     }
 
     result = CDevice::Instance().GetContext()->Prepare(function);
 	if( result < 0 ) 
 	{
-        System::Log() << "Failed to prepare script context.\n";
+        System::Error() << "Failed to prepare script context.";
         System::Exit();
 	}
 }
@@ -71,21 +70,19 @@ void* CScript::Execute()
 	{
 		// The execution didn't finish as we had planned. Determine why.
 		if( result == asEXECUTION_ABORTED )
-			System::Log() << "The script was aborted before it could finish. Probably it timed out.\n";
+			System::Warning() << "The script was aborted before it could finish. Probably it timed out.\n";
 		else if( result == asEXECUTION_EXCEPTION )
-		{
-			System::Log() << "The script ended with an exception.\n";
-
-			// Write some information about the script exception
+		{ // TODO
 			asIScriptFunction *func = CDevice::Instance().GetContext()->GetExceptionFunction();
-			System::Log() << "func: " << func->GetDeclaration() << '\n';
-			System::Log() << "modl: " << func->GetModuleName() << '\n';
-			System::Log() << "sect: " << func->GetScriptSectionName() << '\n';
-			System::Log() << "line: " << CDevice::Instance().GetContext()->GetExceptionLineNumber() << '\n';
-			System::Log() << "desc: " << CDevice::Instance().GetContext()->GetExceptionString() << '\n';
+			System::Warning() << "The script ended with an exception.\n"
+			<< "Function: " << func->GetDeclaration() << '\n'
+			<< "Module: " << func->GetModuleName() << '\n'
+			<< "Section: " << func->GetScriptSectionName() << '\n'
+			<< "Line: " << CDevice::Instance().GetContext()->GetExceptionLineNumber() << '\n'
+			<< "Description: " << CDevice::Instance().GetContext()->GetExceptionString();
 		}
 		else
-			System::Log() << "The script ended for some unforeseen reason (" << result << ")." << '\n';
+			System::Warning() << "The script ended for some unforeseen reason (" << result << ")." << '\n';
 	}
 	else
 	{

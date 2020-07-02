@@ -25,6 +25,14 @@ CMesh::~CMesh()
 
 void CMesh::LoadModel(std::string_view path)
 {
+	std::ifstream sin(path.data());
+	
+	if (!sin.is_open())
+	{
+		System::Warning() << "Failed to load obj \"" << path << "\"";
+		return;
+	}
+	else
 	if (m_VAO || m_VBO)
 	{
 		glDeleteVertexArrays(1, &m_VAO);
@@ -33,7 +41,6 @@ void CMesh::LoadModel(std::string_view path)
 		m_data.clear();
 	}
 
-	// читаем модель из obj
 	ReadFromObj(path);
 
 	glGenVertexArrays(1, &m_VAO);
@@ -81,8 +88,8 @@ void CMesh::ReadFromObj(std::string_view path)
 	std::ifstream sin(path.data());
 	if (!sin.is_open())
 	{
-		std::cout << "Не удалось открыть файл " << path << std::endl;
-		std::exit(EXIT_FAILURE);
+		System::Warning() << "Failed to load obj \"" << path << "\"";
+		return;
 	}
 
 	std::vector<glm::vec3> verticies;

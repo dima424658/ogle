@@ -4,7 +4,7 @@ using namespace Sound;
 
 CSound3D::CSound3D(const char* path, bool loop) : CSound2D(path, loop)
 {
-    // !!!
+    // TODO
     FMOD_RESULT result;
     m_position = m_velocity = {0, 0, 0};
 
@@ -17,7 +17,7 @@ CSound3D::CSound3D(const char* path, bool loop) : CSound2D(path, loop)
 
 void CSound3D::Update(float deltaTime, FMOD_VECTOR position)
 {
-    // !!!
+    // TODO
     FMOD_RESULT result;
 
     m_velocity = (position - m_position) * (1000.0f / deltaTime);

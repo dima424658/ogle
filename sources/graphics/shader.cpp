@@ -98,7 +98,7 @@ void CShader::Set(const std::string_view& name, GLfloat arg) const
 
 void CShader::Set(const std::string_view& name, GLint arg) const
 {
-    glUniform1i(glGetUniformLocation(m_id, name.data()), arg); 
+    glUniform1i(glGetUniformLocation(m_id, name.data()), arg);
 }
 
 

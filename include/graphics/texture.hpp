@@ -24,14 +24,14 @@ namespace Graphics
 
     public:
         CTexture();
-        CTexture(const std::string& path);
+        CTexture(std::string_view path);
         CTexture(const CTexture& o);
         CTexture(CTexture&& o) noexcept;
         ~CTexture();
 
-        void LoadImage(const std::string& path);
-        void Use(GLenum index = GL_TEXTURE0);
-        GLuint GetID();
+        void LoadImage(std::string_view path);
+        void Use(GLenum index = GL_TEXTURE0) const;
+        GLuint GetID() const;
         
     private:
         void LoadDefault();

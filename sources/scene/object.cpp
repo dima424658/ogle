@@ -1,13 +1,13 @@
 #include <scene/object.hpp>
 
-CObject::CObject(const std::string& name, bool active) : m_name(name), m_active(active), m_position(0.0f)
+CObject::CObject(const std::string& name, bool active, uint32_t id) : m_id(id), m_position(0.0f),  m_name(name), m_active(active)
 {
 	static std::random_device rd;
 	static std::mt19937_64 generator = std::mt19937_64(rd());
 	static std::uniform_int_distribution<uint32_t> uid;
 
-	m_id = uid(generator);
-
+	if(m_id == 0)
+		m_id = uid(generator);
 }
 
 CObject::~CObject()
@@ -107,24 +107,46 @@ Graphics::CMesh* CObject::GetMesh() const
 	return m_mesh;
 }
 
-void CObject::CreateTexture(Graphics::CTexture* c)
+void CObject::CreateMaterial(Graphics::CMaterial* c)
 {
-	if (m_texture)
-		delete m_texture;
+	if (m_material)
+		delete m_material;
 
-	m_texture = c;
+	m_material = c;
 }
 
-void CObject::DestroyTexture()
+void CObject::DestroyMaterial()
 {
-	if (m_texture)
+	if (m_material)
 	{
-		delete m_texture;
-		m_texture = nullptr;
+		delete m_material;
+		m_material = nullptr;
 	}
 }
 
-Graphics::CTexture* CObject::GetTexture() const
+Graphics::CMaterial* CObject::GetMaterial() const
 {
-	return m_texture;
+	return m_material;
+}
+
+void CObject::CreateCamera(CCamera* c)
+{
+	if (m_camera)
+		delete m_camera;
+
+	m_camera = c;
+}
+
+void CObject::DestroyCamera()
+{
+	if (m_camera)
+	{
+		delete m_camera;
+		m_camera = nullptr;
+	}
+}
+
+CCamera* CObject::GetCamera() const
+{
+	return m_camera;
 }

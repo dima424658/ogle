@@ -36,4 +36,8 @@ namespace Graphics
         SDL_GLContext m_context;
     };
 
+    inline CDevice& GetGraphics()
+    {
+        return CDevice::Instance();
+    }
 };
