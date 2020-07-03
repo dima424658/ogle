@@ -10,21 +10,6 @@
 *.gch
 *.pch
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
 # Executables
 *.exe
 *.out
@@ -33,4 +18,15 @@
 # Visual Studio
 .vs
 .vscode
+
+# Other
+
 build/*
+imgui.ini
+*.json
+*.log
+
+dependencies/angelscript/*
+dependencies/fmod/*
+dependencies/SDL2/*
+dependencies/fbxsdk/*
