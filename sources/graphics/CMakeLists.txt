@@ -7,6 +7,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/texture.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/material.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/editor.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/ui.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/light.cpp
 )
 
 find_package(GLM REQUIRED)

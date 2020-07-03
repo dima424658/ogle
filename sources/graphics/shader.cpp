@@ -101,6 +101,10 @@ void CShader::Set(const std::string_view& name, GLint arg) const
     glUniform1i(glGetUniformLocation(m_id, name.data()), arg);
 }
 
+void CShader::Set(const std::string_view& name, GLuint arg) const
+{
+    glUniform1ui(glGetUniformLocation(m_id, name.data()), arg);
+}
 
 void CShader::Use() const
 {

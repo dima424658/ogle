@@ -58,13 +58,13 @@ void CCamera::UpdateRotate(const glm::vec2& delta)
     m_view = glm::lookAt(m_position, m_lookAt, m_yVector);
 }
 
-void CCamera::UpdateZoom(const glm::vec2& delta)
+void CCamera::UpdateZoom(float delta)
 {
     m_direction = (m_position - m_lookAt);;
     m_right = glm::normalize(glm::cross(m_yVector, m_direction));
     m_up = glm::normalize(glm::cross(m_direction, m_right));
 
-    m_position = glm::normalize(m_direction) * (std::max(glm::length(m_direction) + delta.y * m_sensivity, 1.0f)) + m_lookAt;
+    m_position = glm::normalize(m_direction) * (std::max(glm::length(m_direction) + delta * m_sensivity, 1.0f)) + m_lookAt;
 
     m_projection = glm::perspective(glm::radians(45.0f), m_size.x / m_size.y, 0.1f, 100.0f);
     m_view = glm::lookAt(m_position, m_lookAt, m_yVector);

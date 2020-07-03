@@ -31,15 +31,17 @@ namespace Graphics
         ~CMesh();
 
         void LoadModel(std::string_view path);
-        std::string& GetName();
+        const std::string& GetName() const;
+        const std::string& GetPath() const;
 
-        bool isLoaded();
+        bool isLoaded() const;
 
         void Draw() const;
     private:
-        void ReadFromObj(std::string_view path);
+        bool ReadFromObj(std::string_view path);
 
         std::string m_name;
+        std::string m_modelPath;
         std::vector<float> m_data;
         GLuint m_VAO, m_VBO;
     };

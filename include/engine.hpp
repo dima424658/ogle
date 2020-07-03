@@ -12,6 +12,7 @@
 #include "graphics/texture.hpp"
 #include "graphics/ui.hpp"
 #include "graphics/ui/editor.hpp"
+#include "graphics/light.hpp"
 
 #include "system/log.hpp"
 #include "system/timer.hpp"

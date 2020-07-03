@@ -316,3 +316,77 @@ Script engine RegisterGlobalFunction() failed.
 
 AngelScript:  (0 : 0) : Failed in call to function 'RegisterObjectType' with 'vec3' (Code: asINVALID_ARG, -5)
 Script engine RegisterObjectType() failed.
+
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Failed to load obj "./Project1.sln"
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Loading scene: "./scene.json"
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Loading scene: "./scene.json"
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Loading scene: "./scene.json"
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Loading scene: "./imgui.ini"
+Failed to parse json scene file: "./imgui.ini"
+Loading scene: "./scene.json"
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Loading scene: "./scene.json"
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Loading scene: "./scene.json"
+0.500000 1.000000 1.500000
+Received: 6, 2
+
+Result is 12
+Initialized FMOD version 20008
+Loading scene: "./_save.json"
+Loading scene: "./scene.json"
+Loading successful.
+Loading scene: "./scene.json"
+Loading successful.
+Loading scene: "./scene.json"
+Loading successful.
+Loading scene: "./scene.json"
+Loading successful.

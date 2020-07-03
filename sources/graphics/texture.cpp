@@ -12,12 +12,13 @@ CTexture::CTexture(std::string_view path)
     LoadImage(path);
 }
 
-CTexture::CTexture(const CTexture& o)
+CTexture::CTexture(const CTexture &o)
 {
     GLuint fbo;
     m_width = o.m_width;
     m_height = o.m_height;
     m_format = o.m_format;
+    m_imagePath = o.m_imagePath;
 
     glGenTextures(1, &m_id);
     glGenFramebuffers(1, &fbo);
@@ -29,15 +30,16 @@ CTexture::CTexture(const CTexture& o)
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_id, 0);
     glDrawBuffer(GL_COLOR_ATTACHMENT1);
     glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height,
-        GL_COLOR_BUFFER_BIT, GL_NEAREST);
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     glGenerateMipmap(GL_TEXTURE_2D);
     glDeleteFramebuffers(1, &fbo);
 }
 
-CTexture::CTexture(CTexture&& o) noexcept
+CTexture::CTexture(CTexture &&o) noexcept
 {
     m_id = o.m_id;
+    m_imagePath = std::move(o.m_imagePath);
     o.m_id = 0;
     m_width = o.m_width;
     m_height = o.m_height;
@@ -49,6 +51,7 @@ CTexture::~CTexture()
     if (m_id != 0)
     {
         glDeleteTextures(1, &m_id);
+        m_imagePath = "";
         m_id = 0;
         m_width = 0;
         m_height = 0;
@@ -60,7 +63,7 @@ void CTexture::LoadImage(std::string_view path)
 {
     this->~CTexture();
 
-    SDL_Surface* surface = IMG_Load(path.data());
+    SDL_Surface *surface = IMG_Load(path.data());
     if (!surface)
     {
         System::Warning() << "Failed to load image \"" << path << "\": " << IMG_GetError() << ". Setting default";
@@ -93,12 +96,18 @@ void CTexture::LoadImage(std::string_view path)
     glGenerateMipmap(GL_TEXTURE_2D);
 
     SDL_FreeSurface(surface);
+    m_imagePath = path;
+}
+
+const std::string &Graphics::CTexture::GetPath() const
+{
+    return m_imagePath;
 }
 
 void CTexture::LoadDefault()
 {
-    SDL_RWops* rwops = SDL_RWFromMem(default_image, sizeof(default_image) / sizeof(uint8_t));
-    SDL_Surface* surface = IMG_Load_RW(rwops, 0);
+    SDL_RWops *rwops = SDL_RWFromMem(default_image, sizeof(default_image) / sizeof(uint8_t));
+    SDL_Surface *surface = IMG_Load_RW(rwops, 0);
     SDL_FreeRW(rwops);
     if (!surface)
     {
@@ -115,6 +124,7 @@ void CTexture::LoadDefault()
     m_format = GL_RGB;
 
     SDL_FreeSurface(surface);
+    m_imagePath = "";
 }
 
 void CTexture::Use(GLenum index) const

@@ -74,8 +74,6 @@ GLuint CDeferred::DrawToTexture(const glm::vec3& cameraPosition) const
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, m_textureAlbedo);
 
-    m_diffuseShader.Set("lightPos", glm::vec3(4.0f, 4.0f, 4.0f));
-    m_diffuseShader.Set("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     m_diffuseShader.Set("viewPos", cameraPosition);
 
     RenderScreen();
@@ -240,7 +238,12 @@ void CDeferred::Resize(int width, int height)
     m_height = height;
 }
 
-const CShader& CDeferred::GetShader() const
+const CShader& CDeferred::GetGShader() const
 {
     return m_gShader;
+}
+
+const CShader& CDeferred::GetDiffuseShader() const
+{
+    return m_diffuseShader;
 }

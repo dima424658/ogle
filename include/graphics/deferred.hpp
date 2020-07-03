@@ -20,7 +20,8 @@ namespace Graphics
         
         void Resize(int width, int height);
 
-        const CShader& GetShader() const;
+        const CShader& GetGShader() const;
+        const CShader& GetDiffuseShader() const;
     private:
         void InitScreen();
         void RenderScreen() const;

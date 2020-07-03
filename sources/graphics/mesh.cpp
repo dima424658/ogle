@@ -5,12 +5,14 @@ using namespace Graphics;
 CMesh::CMesh()
 {
 	m_name = "";
+	m_modelPath = "";
 	m_VAO = m_VBO = 0;
 }
 
 CMesh::CMesh(std::string_view path)
 {
 	m_name = "";
+	m_modelPath = "";
 	LoadModel(path);
 }
 
@@ -20,28 +22,25 @@ CMesh::~CMesh()
     glDeleteBuffers(1, &m_VBO);
 
 	m_VAO = m_VBO = 0;
+	m_name = "";
 	m_data.clear();
 }
 
 void CMesh::LoadModel(std::string_view path)
 {
-	std::ifstream sin(path.data());
-	
-	if (!sin.is_open())
+	if(!ReadFromObj(path))
 	{
 		System::Warning() << "Failed to load obj \"" << path << "\"";
-		return;
+
+		if(m_VAO && m_VBO)
+			return;
 	}
-	else
-	if (m_VAO || m_VBO)
+
+	if (m_VAO && m_VBO)
 	{
 		glDeleteVertexArrays(1, &m_VAO);
 		glDeleteBuffers(1, &m_VBO);
-		m_name = "";
-		m_data.clear();
 	}
-
-	ReadFromObj(path);
 
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -64,14 +63,19 @@ void CMesh::LoadModel(std::string_view path)
 	glEnableVertexAttribArray(0);
 }
 
-std::string& Graphics::CMesh::GetName()
+const std::string& Graphics::CMesh::GetName() const
 {
 	return m_name;
 }
 
-bool Graphics::CMesh::isLoaded()
+const std::string& Graphics::CMesh::GetPath() const
 {
-	return m_VAO || m_VBO;
+	return m_modelPath;
+}
+
+bool Graphics::CMesh::isLoaded() const
+{
+	return (m_VAO || m_VBO) && m_modelPath.compare("") != 0;
 }
 
 void CMesh::Draw() const
@@ -83,19 +87,18 @@ void CMesh::Draw() const
 	}
 }
 
-void CMesh::ReadFromObj(std::string_view path)
+bool CMesh::ReadFromObj(std::string_view path)
 {
 	std::ifstream sin(path.data());
 	if (!sin.is_open())
-	{
-		System::Warning() << "Failed to load obj \"" << path << "\"";
-		return;
-	}
+		return false;
 
 	std::vector<glm::vec3> verticies;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> textures;
 	std::vector<Face> faces;
+	
+	Face maxFace = {0, 0, 0};
 
 	std::string buffer;
 
@@ -137,14 +140,30 @@ void CMesh::ReadFromObj(std::string_view path)
 
 				size_t first = buffer.find_first_of('/');
 				size_t last = buffer.find_last_of('/');
+				
+				if(first == std::string::npos || last == std::string::npos)
+					return false;
 
 				f.vertex = std::stoll(buffer.substr(0, first));
 				f.texture = std::stoll(buffer.substr(first + 1, last - first - 1));
 				f.normal = std::stoll(buffer.substr(last + 1, buffer.size() - last - 1));
+
+				maxFace.vertex = std::max(maxFace.vertex, f.vertex);
+				maxFace.texture = std::max(maxFace.texture, f.texture);
+				maxFace.normal = std::max(maxFace.normal, f.normal);
+
 				faces.push_back(f);
 			}
 		}
 	}
+
+	if(maxFace.vertex > verticies.size() || maxFace.normal > normals.size() || maxFace.texture > textures.size())
+		return false;
+
+	if(verticies.size() < 1 || normals.size() < 1 || textures.size() < 1)
+		return false;
+
+	m_data.clear();
 
 	for (auto& face : faces)
 	{
@@ -156,4 +175,8 @@ void CMesh::ReadFromObj(std::string_view path)
 	m_data.shrink_to_fit();
 
 	sin.close();
+
+	m_modelPath = path;
+
+	return true;
 }

@@ -4,6 +4,7 @@
 
 #include <graphics/texture.hpp>
 #include <array>
+#include <cassert>
 
 namespace Graphics
 {
@@ -12,12 +13,28 @@ namespace Graphics
     private:
         float color[4];
     public:
+        SColor4(const float(&list)[4])
+        {
+            color[0] = list[0];
+            color[1] = list[1];
+            color[2] = list[2];
+            color[3] = list[3];
+        }
+
         SColor4(float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f)
         {
             color[0] = r;
             color[1] = g;
             color[2] = b;
             color[3] = a;
+        }
+        
+        SColor4(const glm::vec4& vec)
+        {
+            color[0] = vec.r;
+            color[1] = vec.g;
+            color[2] = vec.b;
+            color[3] = vec.a;
         }
 
         SColor4& operator=(const glm::vec4& vec)
@@ -72,7 +89,6 @@ namespace Graphics
         {
             return glm::vec4(color[0], color[1], color[2], color[3]);
         }
-
     };
 
     static SColor4 operator/(const SColor4& col, float val)

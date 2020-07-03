@@ -15,7 +15,7 @@ public:
 
 	void UpdatePan(const glm::vec2& mouseDelta);
 	void UpdateRotate(const glm::vec2& mouseDelta);
-	void UpdateZoom(const glm::vec2& mouseDelta);
+	void UpdateZoom(float delta);
 	void Update();
 
 	void SetRenderSize(float, float);

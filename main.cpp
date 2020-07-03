@@ -15,94 +15,84 @@ int main()
 {
     try
     {
-    Graphics::GetGraphics();
-    System::GetTimer().SetDelay(10);
-    CScene scene;
-    CCamera camera;
-    Graphics::CTexture texture("data/256.jpeg");
-    //Graphics::CMesh mesh("data/cube.obj");
-    Graphics::CTexture textureSpec("data/container2_specular.png");
-    
-    Graphics::CDeferred def(1600, 900);
-    Graphics::CEditor editor(scene);
-    
-	RegisterStdString(Script::GetScript().GetEngine());
+        Graphics::GetGraphics();
+        System::GetTimer().SetDelay(10);
 
-    Script::RegisterGLM();
-    Script::RegisterFunctions(Script::GetScript().GetEngine());
-    
-    Sound::CSound2D::RegisterScript();
-    Sound::CSound3D::RegisterScript();
+        CScene scene;
+        scene.LoadScene("./scene.json");
 
+        CCamera camera;
 
-    Script::CScript script("data/script.as");
+        Graphics::CDeferred def(1600, 900);
+        Graphics::CEditor editor(scene);
 
-    script.PrepareFunction("float calc(float, float)");
-    script.GetContext()->SetArgFloat(0, 6.0f);
-    script.GetContext()->SetArgFloat(1, 2.0f);
-    void* result = script.Execute();
+        RegisterStdString(Script::GetScript().GetEngine());
 
-    float a = *(static_cast<float*>(result));
-    System::Log() << "Result is " << a;
-   // sound.Play();
+        Script::RegisterGLM();
+        Script::RegisterFunctions(Script::GetScript().GetEngine());
 
-    Sound::CSoundListener listener;
+        Sound::CSound2D::RegisterScript();
+        Sound::CSound3D::RegisterScript();
 
-    int width, height;
-    SDL_GetWindowSize(Graphics::GetGraphics().GetWindow(), &width, &height);
-    camera.SetRenderSize(width, height);
-    camera.Update();
+        Script::CScript script("data/script.as");
 
-    System::GetTimer().Sync();
-    System::GetInput();
+        script.PrepareFunction("float calc(float, float)");
+        script.GetContext()->SetArgFloat(0, 6.0f);
+        script.GetContext()->SetArgFloat(1, 2.0f);
+        void *result = script.Execute();
 
-    auto id = scene.AddObject("cube", true);
-    scene.GetObject(id)->CreateMesh(new Graphics::CMesh("data/cube.obj"));
+        float a = *(static_cast<float *>(result));
+        System::Log() << "Result is " << a;
+        // sound.Play();
 
-    id = scene.AddObject("camera", true);
-    scene.GetObject(id)->CreateCamera(new CCamera());
+        Sound::CSoundListener listener;
 
-    while(true)
-    {
-        SDL_PumpEvents();
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            Graphics::GetUI().ProcessEvent(event);
-            if (event.type == SDL_QUIT)
-                std::exit(EXIT_SUCCESS);
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE) //&& event.window.windowID == SDL_GetWindowID(m_window))
-                std::exit(EXIT_SUCCESS);
-        }
-           
-        //listener.Update(GetTimer().GetDelta() * 1000, toFMOD_VECTOR(cameraPosition));
-        Sound::GetSound().Update();
-        
-        scene.Update();
-
-        Graphics::GetGraphics().Begin();
-
-        Graphics::GetUI().NewFrame(System::GetTimer().GetDelta() / 1000);
-
-
-        editor.Update();
-
-        scene.Draw(def);
-
-        Graphics::GetUI().RenderDrawData();
-        
-        Graphics::GetGraphics().End();
+        int width, height;
+        SDL_GetWindowSize(Graphics::GetGraphics().GetWindow(), &width, &height);
+        camera.SetRenderSize(width, height);
+        camera.Update();
 
         System::GetTimer().Sync();
-        System::GetInput().Update();
-    }
+        System::GetInput();
 
+        while (true)
+        {
+            SDL_PumpEvents();
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
+            {
+                Graphics::GetUI().ProcessEvent(event);
+                if (event.type == SDL_QUIT)
+                    std::exit(EXIT_SUCCESS);
+                if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE) //&& event.window.windowID == SDL_GetWindowID(m_window))
+                    std::exit(EXIT_SUCCESS);
+            }
+
+            //listener.Update(GetTimer().GetDelta() * 1000, toFMOD_VECTOR(cameraPosition));
+            Sound::GetSound().Update();
+
+            scene.Update();
+
+            Graphics::GetGraphics().Begin();
+
+            Graphics::GetUI().NewFrame(System::GetTimer().GetDelta() / 1000);
+
+            editor.Update();
+
+            scene.Draw(def);
+
+            Graphics::GetUI().RenderDrawData();
+
+            Graphics::GetGraphics().End();
+
+            System::GetTimer().Sync();
+            System::GetInput().Update();
+        }
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << '\n';
     }
-    
-    return 0;
 
+    return 0;
 }

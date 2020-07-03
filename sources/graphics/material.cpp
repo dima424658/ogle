@@ -116,7 +116,7 @@ const CTexture* CMaterial::GetSpecular() const
 
 bool CMaterial::HasTexture(size_t i) const
 {
-    return m_useTexutre[i];
+    return m_useTexutre[i] && (m_textures[i] != nullptr);
 }
 
 void CMaterial::LoadTexture(size_t i, std::string_view path)

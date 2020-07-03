@@ -8,6 +8,7 @@
 #include <sound/sound3d.hpp>
 #include <sound/sound2d.hpp>
 
+#include <graphics/light.hpp>
 #include <graphics/mesh.hpp>
 #include <graphics/material.hpp>
 
@@ -32,9 +33,17 @@ public:
 	const std::string& GetName() const;
 	void SetName(const std::string& name);
 
-	void SetPosition(glm::vec3& pos);
+	void SetPosition(const glm::vec3& pos);
 	const glm::vec3& GetPosition() const;
 	glm::vec3& GetPosition();
+	
+	void SetRotation(const glm::vec3& rot);
+	const glm::vec3& GetRotation() const;
+	glm::vec3& GetRotation();
+
+	void SetScale(const glm::vec3& scale);
+	const glm::vec3& GetScale() const;
+	glm::vec3& GetScale();
 
 	void CreateSound3D(Sound::CSound3D* c);
 	void DestroySound3D();
@@ -47,16 +56,22 @@ public:
 	void CreateMaterial(Graphics::CMaterial* c);
 	void DestroyMaterial();
 	Graphics::CMaterial* GetMaterial() const;
-
+	
+	void CreateLight(Graphics::CLight* c);
+	void DestroyLight();
+	Graphics::CLight* GetLight() const;
+/*
 	void CreateCamera(CCamera* c);
 	void DestroyCamera();
 	CCamera* GetCamera() const;
-
+*/
 	void Update();
 
 private:
 	uint32_t m_id;
 	glm::vec3 m_position;
+	glm::vec3 m_rotation;
+	glm::vec3 m_scale;
 	std::string m_name;
 	bool m_active;
 	
@@ -64,6 +79,7 @@ private:
 	Sound::CSound3D* m_sound3d = nullptr;
 	Graphics::CMaterial* m_material = nullptr;
 	Graphics::CMesh* m_mesh = nullptr;
-	CCamera* m_camera = nullptr;
+	Graphics::CLight* m_light = nullptr;
+	//CCamera* m_camera = nullptr;
 
 };

@@ -9,6 +9,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 add_definitions(-pthread -Wall -g -D_DEBUG -m64)
 
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/rapidjson/include)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/angelscript/include)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/fmod/inc)

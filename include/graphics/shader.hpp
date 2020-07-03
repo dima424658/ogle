@@ -23,6 +23,7 @@ namespace Graphics
         void Set(const std::string_view& name, const glm::vec4& arg) const;
         void Set(const std::string_view& name, GLfloat arg) const;
         void Set(const std::string_view& name, GLint arg) const;
+        void Set(const std::string_view& name, GLuint arg) const;
         
     private:
         unsigned int m_id;
