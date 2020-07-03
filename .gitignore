@@ -33,5 +33,4 @@
 # Visual Studio
 .vs
 .vscode
-dependencies/*
 build/*
