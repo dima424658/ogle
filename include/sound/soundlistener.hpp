@@ -12,7 +12,7 @@ namespace Sound
         CSoundListener();
         ~CSoundListener();
         //Delta Time in ms. Position in meters
-        void Update(float deltaTime, FMOD_VECTOR position);
+        void Update(float deltaTime, FMOD_VECTOR position, const FMOD_VECTOR& forward, const FMOD_VECTOR& up);
 
     private:
         FMOD_VECTOR m_position;

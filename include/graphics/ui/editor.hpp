@@ -4,6 +4,7 @@
 #include <scene/scene.hpp>
 #include <system/timer.hpp>
 #include <system/log.hpp>
+#include <platform/linux.hpp>
 
 #include <filesystem>
 #include <functional>
@@ -21,7 +22,7 @@ namespace Graphics
     private:
         void ShowDockSpace(bool* p_open);
         static void ShowExplorerRec(std::filesystem::path path, std::filesystem::path& selected);
-        static bool ShowFileExplorer(const std::string& name, std::function<void(const std::string&)> openCb);
+        //static bool ShowFileExplorer(const std::string& name, std::function<void(const std::string&)> openCb);
         // returns id of selected object
         uint32_t ShowSceneHierarhy(bool* p_open, CScene& scene);
         void ShowObjectInspector(bool* p_open, CObject* object);

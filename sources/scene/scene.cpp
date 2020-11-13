@@ -12,15 +12,6 @@ void CScene::Update()
 {
 	for (auto &el : m_objects)
 	{
-		/*glm::mat4 model = glm::translate(glm::mat4(1.0f), el.GetPosition());
-		if (el.GetTexture())
-		{
-			el.GetTexture()->Use(GL_TEXTURE0);
-			shader.GetShader().Set("texture_diffuse1", 0);
-		}
-
-		shader.GetShader().Set("model", model);
-		*/
 		el.Update();
 
 		if (el.GetMesh())
@@ -55,13 +46,7 @@ void CScene::Draw(Graphics::CDeferred &def)
 		}
 
 		def.Prepare();
-
-		//def.GetShader().Set("texture_diffuse1", 0);
-		//texture.Use(GL_TEXTURE0);
-
-		//def.GetShader().Set("texture_specular1", 1);
-		//textureSpec.Use(GL_TEXTURE1);
-
+		
 		for (auto mesh : m_drawQueue)
 		{
 			static glm::mat4 modelMat;
@@ -88,19 +73,43 @@ void CScene::Draw(Graphics::CDeferred &def)
 				if (mesh->GetMaterial()->GetSpecular())
 				{
 					def.GetGShader().Set("has_specular", true);
-					def.GetGShader().Set("texture_specular", 0);
+					def.GetGShader().Set("texture_specular", 1);
 					mesh->GetMaterial()->GetDiffuse()->Use(GL_TEXTURE1);
 				}
 				else
 					def.GetGShader().Set("has_specular", false);
+				
+				if(mesh->GetMaterial()->GetNormal())
+				{
+					def.GetGShader().Set("has_normal", true);
+					def.GetGShader().Set("texture_normal", 2);
+					mesh->GetMaterial()->GetNormal()->Use(GL_TEXTURE2);
+
+				}
+				else
+					def.GetGShader().Set("has_normal", false);
 			}
 			else
 			{
 				def.GetGShader().Set("has_diffuse", false);
 				def.GetGShader().Set("has_specular", false);
+				def.GetGShader().Set("has_normal", false);
 				def.GetGShader().Set("color_diffuse", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 				def.GetGShader().Set("power_specular", 1.0f);
 			}
+
+			auto oID = mesh->GetID();
+
+			glm::vec4 color;
+
+			color[0] = oID % 256;
+			color[1] = (oID >> 8) % 256;
+			color[2] = (oID >> 16) % 256;
+			color[3] = (oID >> 24) % 256;
+			color /= 255.0f;
+
+			def.GetGShader().Set("oID", color);
+
 			mesh->GetMesh()->Draw();
 		}
 
@@ -114,8 +123,8 @@ void CScene::Draw(Graphics::CDeferred &def)
 		def.GetDiffuseShader().Set("lightCount", static_cast<GLint>(lightSize));
 		size_t i = 0;
 
-    glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+ //   glEnable(GL_DEBUG_OUTPUT); // TODO
+   // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
 		for(auto light : m_lightQueue)
 		{
@@ -127,19 +136,47 @@ void CScene::Draw(Graphics::CDeferred &def)
             def.GetDiffuseShader().Set("lights[" + std::to_string(i) + "].linear", light->GetLight()->GetLinear());
             def.GetDiffuseShader().Set("lights[" + std::to_string(i) + "].quadratic", light->GetLight()->GetQuadratic());
 			
-			auto err = glGetError();
-
-			if(err != GL_NO_ERROR)
-			{
-				break;
-			}
-
 			i++;
 		}
 
 		def.Resize(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 40);
 		GLuint texture = def.DrawToTexture(m_camera.GetPosition());
-		ImGui::Image((void *)(intptr_t)texture, ImVec2(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 40));
+		glBindFramebuffer(GL_FRAMEBUFFER, def.GetFinalbuffer());
+		glDepthFunc(GL_ALWAYS);
+
+		static Graphics::CTexture testTexture("data/light.png");
+
+		for(auto light : m_lightQueue)
+		{
+		Graphics::CSprite sprite;
+
+		static glm::mat4 spriteMat;
+		spriteMat = glm::translate(glm::mat4(1.0f), light->GetPosition());
+
+		sprite.Render(glm::vec2(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 40), glm::vec2(512, 512),
+		testTexture.GetID(), light->GetLight()->GetColor(), spriteMat, m_camera.GetView(), m_camera.GetProjection());
+
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		if (ImGui::IsWindowHovered())
+		{
+			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				ImVec2 pos = ImGui::GetMousePos();
+				pos.x -= ImGui::GetWindowPos().x + 8;
+				pos.y -= ImGui::GetWindowPos().y + 30;
+
+				auto object = GetObject(def.GetObjectID(pos.x, pos.y));
+				if(object != nullptr)
+				{
+					System::Log() << "пикнут " << object->GetName();
+				}
+			}
+		}
+
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 40));
 	}
 	ImGui::End();
 
@@ -185,6 +222,11 @@ void CScene::DeleteObject(uint32_t id)
 
 		it++;
 	}
+}
+
+const CCamera& CScene::GetActiveCamera() const
+{
+	return m_camera;
 }
 
 void CScene::DeleteObject(std::list<CObject>::const_iterator it)
@@ -429,7 +471,7 @@ Graphics::CMaterial CScene::LoadMaterial(const rapidjson::GenericValue<rapidjson
 
 	if (json.HasMember("DiffuseColor"))
 		if (json["DiffuseColor"].IsArray())
-			result.SetDiffuseColor(Graphics::SColor4(LoadVec<4>(json["DiffuseColor"])));
+			result.SetDiffuseColor(LoadVec<3>(json["DiffuseColor"]));
 
 	if (json.HasMember("SpecularPower"))
 		if (json["SpecularPower"].IsFloat())
@@ -443,7 +485,7 @@ void CScene::SaveMaterial(rapidjson::Value &json, rapidjson::MemoryPoolAllocator
 	json.SetObject();
 
 	json.AddMember("DiffuseColor", rapidjson::kArrayType, allocator);
-	SaveVec<4>(json["DiffuseColor"], allocator, mat.GetDiffuseColor());
+	SaveVec<3>(json["DiffuseColor"], allocator, mat.GetDiffuseColor());
 
 	json.AddMember("SpecularPower", rapidjson::kNumberType, allocator);
 	json["SpecularPower"].SetFloat(mat.GetSpecularPower());

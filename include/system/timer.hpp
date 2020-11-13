@@ -25,6 +25,7 @@ namespace System
         void Sync() noexcept;
         void SetDelay(std::chrono::milliseconds inDelay) noexcept;
         void SetDelay(int inDelay) noexcept;
+        
         float GetDelta() noexcept;
         float GetTime() noexcept;
 

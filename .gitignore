@@ -21,6 +21,7 @@
 
 # Other
 
+data/*
 build/*
 imgui.ini
 *.json
@@ -29,4 +30,5 @@ imgui.ini
 dependencies/angelscript/*
 dependencies/fmod/*
 dependencies/SDL2/*
+dependencies/glad/*
 dependencies/fbxsdk/*

@@ -22,14 +22,15 @@ CSoundListener::~CSoundListener()
 
 }
 
-void CSoundListener::Update(float deltaTime, FMOD_VECTOR position)
+void CSoundListener::Update(float deltaTime, FMOD_VECTOR position, const FMOD_VECTOR& forward, const FMOD_VECTOR& up)
 {
     FMOD_RESULT result;
 
-    m_velocity = (position - m_position) * (1000.0f / deltaTime);
+    position = position * g_distanceFactor;
+    m_velocity = (position - m_position) / (deltaTime);
     m_position = position;
 
-    result = CDevice::Instance().GetSystem()->set3DListenerAttributes(0, &m_position, &m_velocity, &m_forward, &m_up);
+    result = CDevice::Instance().GetSystem()->set3DListenerAttributes(0, &m_position, &m_velocity, &forward, &up);
     if(result != FMOD_OK)
     {
         System::Error() << "Failed to update FMOD listener: " << Sound::Error(result);

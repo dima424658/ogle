@@ -11,9 +11,12 @@
 #include <filesystem>
 #include <functional>
 
-int main()
+#include <platform/info.hpp>
+#include <platform/linux.hpp>
+
+int main(int argc, char **argv)
 {
-    try
+    try 
     {
         Graphics::GetGraphics();
         System::GetTimer().SetDelay(10);
@@ -21,11 +24,9 @@ int main()
         CScene scene;
         scene.LoadScene("./scene.json");
 
-        CCamera camera;
-
         Graphics::CDeferred def(1600, 900);
         Graphics::CEditor editor(scene);
-
+        
         RegisterStdString(Script::GetScript().GetEngine());
 
         Script::RegisterGLM();
@@ -34,23 +35,10 @@ int main()
         Sound::CSound2D::RegisterScript();
         Sound::CSound3D::RegisterScript();
 
-        Script::CScript script("data/script.as");
-
-        script.PrepareFunction("float calc(float, float)");
-        script.GetContext()->SetArgFloat(0, 6.0f);
-        script.GetContext()->SetArgFloat(1, 2.0f);
-        void *result = script.Execute();
-
-        float a = *(static_cast<float *>(result));
-        System::Log() << "Result is " << a;
-        // sound.Play();
-
         Sound::CSoundListener listener;
 
         int width, height;
         SDL_GetWindowSize(Graphics::GetGraphics().GetWindow(), &width, &height);
-        camera.SetRenderSize(width, height);
-        camera.Update();
 
         System::GetTimer().Sync();
         System::GetInput();
@@ -68,10 +56,12 @@ int main()
                     std::exit(EXIT_SUCCESS);
             }
 
-            //listener.Update(GetTimer().GetDelta() * 1000, toFMOD_VECTOR(cameraPosition));
+            listener.Update(System::GetTimer().GetDelta(), toFMOD_VECTOR(scene.GetActiveCamera().GetPosition()),
+             toFMOD_VECTOR(glm::normalize(glm::cross(scene.GetActiveCamera().GetRight(), scene.GetActiveCamera().GetUp()))),
+             toFMOD_VECTOR(glm::normalize(scene.GetActiveCamera().GetUp())));
+
             Sound::GetSound().Update();
 
-            scene.Update();
 
             Graphics::GetGraphics().Begin();
 
@@ -79,8 +69,13 @@ int main()
 
             editor.Update();
 
+            scene.Update();
             scene.Draw(def);
 
+        static bool showd = true;
+
+            ImGui::ShowDemoWindow(&showd);
+            
             Graphics::GetUI().RenderDrawData();
 
             Graphics::GetGraphics().End();

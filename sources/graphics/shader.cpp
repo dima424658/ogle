@@ -63,7 +63,6 @@ CShader::CShader(const std::string& vertexPath, const std::string& fragmentPath)
 
     glDeleteShader(vertexHandle);
     glDeleteShader(fragmentHandle);
-
 }
 
 CShader::~CShader()
@@ -78,7 +77,15 @@ GLuint CShader::GetID() const
 
 void CShader::Set(const std::string_view& name, const glm::mat4& arg) const
 {
+   // GLint last_program; glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+    //glUseProgram(m_id);
     glUniformMatrix4fv(glGetUniformLocation(m_id, name.data()), 1, GL_FALSE, &arg[0][0]);
+    //glUseProgram(last_program);
+}
+
+void CShader::Set(const std::string_view& name, const glm::vec2& arg) const
+{
+    glUniform2fv(glGetUniformLocation(m_id, name.data()), 1, &arg[0]); 
 }
 
 void CShader::Set(const std::string_view& name, const glm::vec3& arg) const
@@ -89,6 +96,11 @@ void CShader::Set(const std::string_view& name, const glm::vec3& arg) const
 void CShader::Set(const std::string_view& name, const glm::vec4& arg) const
 {
     glUniform4fv(glGetUniformLocation(m_id, name.data()), 1, &arg[0]); 
+}
+
+void CShader::Set(const std::string_view& name, GLuint vector[4]) const
+{
+    glUniform4uiv(glGetUniformLocation(m_id, name.data()), 1, vector); 
 }
 
 void CShader::Set(const std::string_view& name, GLfloat arg) const

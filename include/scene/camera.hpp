@@ -22,13 +22,19 @@ public:
 	void SetFOV(float degrees);
 	void SetSensivity(float);
 
-	const glm::mat4& GetProjection();
-	const glm::mat4& GetView();
-	const glm::vec3& GetPosition();
+	const glm::vec3& GetUp() const;
+	const glm::vec3& GetRight() const;
+	const glm::mat4& GetProjection() const;
+	const glm::mat4& GetView() const;
+	const glm::mat4& GetOrthographic() const;
+	const glm::vec3& GetPosition() const;
+
+	glm::vec3 GetPickRay(const glm::vec2& mousePos) const;
 
 private:
 	glm::mat4 m_view;
 	glm::mat4 m_projection;
+	glm::mat4 m_orthographic;
 
 	glm::vec3 m_position;
 	glm::vec3 m_lookAt;
@@ -38,6 +44,8 @@ private:
 	glm::vec3 m_up;
 	glm::vec3 m_right;
 
+	float m_far;
+	float m_near;
 	float m_fov;
 	float m_sensivity;
 

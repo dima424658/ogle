@@ -8,97 +8,6 @@
 
 namespace Graphics
 {
-    struct SColor4
-    {
-    private:
-        float color[4];
-    public:
-        SColor4(const float(&list)[4])
-        {
-            color[0] = list[0];
-            color[1] = list[1];
-            color[2] = list[2];
-            color[3] = list[3];
-        }
-
-        SColor4(float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f)
-        {
-            color[0] = r;
-            color[1] = g;
-            color[2] = b;
-            color[3] = a;
-        }
-        
-        SColor4(const glm::vec4& vec)
-        {
-            color[0] = vec.r;
-            color[1] = vec.g;
-            color[2] = vec.b;
-            color[3] = vec.a;
-        }
-
-        SColor4& operator=(const glm::vec4& vec)
-        {
-            this->color[0] = vec.r;
-            this->color[1] = vec.g;
-            this->color[2] = vec.b;
-            this->color[3] = vec.a;
-
-            return *this;
-        }
-
-        operator float*() const
-        {
-            return const_cast<float*>(color);
-        }
-
-        float operator[](size_t i) const
-        {
-            if(i < 4)
-                return color[i];
-            else 
-                return 1.0f;
-        }
-
-        float r() const
-        {
-            return color[0];
-        }
-
-        float g() const
-        {
-            return color[1];
-        }
-
-        float b() const
-        {
-            return color[2];
-        }
-
-        float a() const
-        {
-            return color[3];
-        }
-
-        float max() const
-        {
-            return std::max(std::max(color[0], color[1]), std::max(color[2], color[3]));
-        }
-
-        operator glm::vec4() const
-        {
-            return glm::vec4(color[0], color[1], color[2], color[3]);
-        }
-    };
-
-    static SColor4 operator/(const SColor4& col, float val)
-    {
-        if(val == 0.0f)
-            return SColor4(1.0f, 1.0f, 1.0f, 1.0f);
-
-        return SColor4(col[0] / val, col[1] / val, col[2] / val, col[3] / val);
-    }
-
     class CMaterial
     {
     private:
@@ -115,8 +24,8 @@ namespace Graphics
         bool HasDiffuse() const;
         void LoadDiffuse(std::string_view path);
         void DestroyDiffuse();
-        void SetDiffuseColor(const SColor4& color);
-        const SColor4& GetDiffuseColor() const;
+        void SetDiffuseColor(const glm::vec3& color);
+        const glm::vec3& GetDiffuseColor() const;
         const CTexture* GetDiffuse() const;
 
         bool HasNormal() const;
@@ -139,8 +48,8 @@ namespace Graphics
 
     private:
         std::array<bool, 3> m_useTexutre;
-        SColor4 m_diffuseColor;
-        SColor4 m_normalColor;
+        glm::vec3 m_diffuseColor;
+        glm::vec3 m_normalColor;
         float m_specularPower;
 
         std::array<CTexture*, 3> m_textures;

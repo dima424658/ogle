@@ -4,7 +4,7 @@ using namespace Graphics;
 
 CDevice::CDevice(int width, int height)
 {    
-    if(SDL_Init(SDL_INIT_VIDEO) != 0)
+    if(SDL_Init(SDL_INIT_VIDEO) != 0) // TODO
         throw std::runtime_error(std::string("Failed to initialize SDL2: ") + SDL_GetError());
 
     m_window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
@@ -40,6 +40,7 @@ void CDevice::Begin()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS); 
     glEnable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
     
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

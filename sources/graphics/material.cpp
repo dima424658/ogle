@@ -9,7 +9,7 @@ CMaterial::CMaterial()
         m_useTexutre[i] = false;
         m_textures[i] = nullptr;
     }
-    m_diffuseColor = SColor4(1.0f);
+    m_diffuseColor = glm::vec3(1.0f);
     m_specularPower = 1.0f;
 }
 
@@ -31,13 +31,9 @@ void CMaterial::LoadDiffuse(std::string_view path)
     LoadTexture(MatID::MatDiffuse, path);
 }
 
-void CMaterial::SetDiffuseColor(const SColor4& color)
+void CMaterial::SetDiffuseColor(const glm::vec3& color)
 {
-
-    if(color.max() > 1.0f)
-        m_diffuseColor = color / color.max();
-    else 
-        m_diffuseColor = color;
+    m_diffuseColor = color;
 }
 
 void CMaterial::DestroyDiffuse()
@@ -45,7 +41,7 @@ void CMaterial::DestroyDiffuse()
     DestroyTexture(MatID::MatDiffuse);
 }
 
-const SColor4& CMaterial::GetDiffuseColor() const
+const glm::vec3& CMaterial::GetDiffuseColor() const
 {
     return m_diffuseColor;
 }

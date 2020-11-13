@@ -61,19 +61,21 @@ void CEditor::ShowDockSpace(bool *p_open)
         if (ImGui::BeginMenu("Engine"))
         {
             if (ImGui::MenuItem("New scene"))
-                    m_scene.DestroyScene();
+                m_scene.DestroyScene();
 
             if (ImGui::MenuItem("Load scene.."))
-                GetUI().CreateWindow("Load scene..", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [&](const std::string &path)
+                m_scene.LoadScene(Platform::file_open());
+            /*GetUI().CreateWindow("Load scene..", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [&](const std::string &path)
                 {
                     m_scene.LoadScene(path);
-                }));
+                }));*/
 
             if (ImGui::MenuItem("Save scene.."))
-                GetUI().CreateWindow("Save scene..", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [&](const std::string &path)
+                m_scene.SaveScene(Platform::file_save());
+            /*GetUI().CreateWindow("Save scene..", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [&](const std::string &path)
                 {
                     m_scene.SaveScene(path);
-                }));
+                }));*/
 
             ImGui::Separator();
             if (ImGui::MenuItem("Close", nullptr, false, p_open != nullptr))
@@ -102,30 +104,12 @@ void CEditor::ShowDockSpace(bool *p_open)
     }
     ImGui::End();
 }
-
-void CEditor::ShowExplorerRec(std::filesystem::path path, std::filesystem::path &selected)
-{
-    std::filesystem::directory_iterator dir(path);
-
-    for (auto &o : dir)
-    {
-        if (o.is_directory())
-        {
-            if (ImGui::TreeNode(o.path().filename().string().c_str()))
-            {
-                ShowExplorerRec(o.path(), selected);
-                ImGui::TreePop();
-            }
-        }
-        else if (ImGui::Selectable(o.path().filename().string().c_str(), selected == o.path()))
-            selected = o.path();
-    }
-}
-
+/*
 bool CEditor::ShowFileExplorer(const std::string &name, std::function<void(const std::string &)> openCb)
 {
     bool p_open = true;
 
+    static std::filesystem::path curPath = ".";
     static std::filesystem::path selected = "";
 
     ImGui::SetNextWindowSize(ImVec2(500, 440));
@@ -135,14 +119,39 @@ bool CEditor::ShowFileExplorer(const std::string &name, std::function<void(const
     if (ImGui::BeginPopupModal("Open File##", nullptr, ImGuiWindowFlags_NoCollapse))
     {
         ImGui::BeginChild("top_pane", ImVec2(0, ImGui::GetWindowHeight() - 70), true);
+        
+        std::filesystem::directory_iterator dir(curPath);
 
-        if (ImGui::TreeNode("."))
+        if(curPath != std::filesystem::path("."))
         {
-            std::filesystem::path path = ".";
+            if (ImGui::Selectable("..", true, ImGuiSelectableFlags_AllowDoubleClick))
+                if (ImGui::IsMouseDoubleClicked(0))
+                {
+                    auto path = curPath.parent_path();
+                    curPath = path;
+                }
+        }
 
-            ShowExplorerRec(path, selected);
+        for (auto &o : dir)
+        {
+            if (o.is_directory())
+                if (ImGui::Selectable(o.path().filename().string().c_str(), true, ImGuiSelectableFlags_AllowDoubleClick))
+                    if (ImGui::IsMouseDoubleClicked(0))
+                        curPath = o.path();
+        }
 
-            ImGui::TreePop();
+        dir = std::filesystem::directory_iterator(curPath);
+        
+        for (auto &o : dir)
+        {
+            if (o.is_regular_file())
+                if (ImGui::Selectable(o.path().filename().string().c_str(), o.path() == selected, ImGuiSelectableFlags_AllowDoubleClick))
+                    if (ImGui::IsMouseDoubleClicked(0))
+                    {
+                        p_open = false;
+                        openCb(o.path().relative_path().string());
+                        curPath = ".";
+                    }
         }
 
         ImGui::EndChild();
@@ -151,6 +160,7 @@ bool CEditor::ShowFileExplorer(const std::string &name, std::function<void(const
         {
             p_open = false;
             openCb(selected.relative_path().string());
+            curPath = ".";
         }
 
         ImGui::SameLine();
@@ -162,7 +172,7 @@ bool CEditor::ShowFileExplorer(const std::string &name, std::function<void(const
     }
 
     return !p_open;
-}
+}*/
 
 uint32_t CEditor::ShowSceneHierarhy(bool *p_open, CScene &scene)
 {
@@ -226,6 +236,7 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
     if (object->GetSound3D())
         if (ImGui::CollapsingHeader("Sound3D", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            static char sound_buffer[128] = {'\0'};
             ImGui::Text("Sound name: %s", object->GetSound3D()->GetName().c_str());
 
             bool playing = object->GetSound3D()->IsPlaying();
@@ -236,6 +247,21 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
 
             if (ImGui::DragFloat("Volume", &volume, 0.1f, 0.0f, 100.0f, "%.1f"))
                 object->GetSound3D()->SetVolume(volume);
+
+            if (ImGui::Button("Load sound.."))
+                ImGui::OpenPopup("load_sound_popup");
+            if (ImGui::BeginPopup("load_sound_popup"))
+            {
+                ImGui::InputText("Name", sound_buffer, IM_ARRAYSIZE(sound_buffer));
+                ImGui::SameLine();
+                if (ImGui::Button("..."))
+                    object->GetSound3D()->Load(Platform::file_open());
+
+                if (ImGui::Button("Load"))
+                    object->GetMaterial()->LoadNormal(sound_buffer);
+
+                ImGui::EndPopup();
+            }
         }
 
     if (object->GetMesh())
@@ -257,13 +283,7 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
                 ImGui::InputText("Name", mesh_buffer, IM_ARRAYSIZE(mesh_buffer));
                 ImGui::SameLine();
                 if (ImGui::Button("..."))
-                {
-                    GetUI().CreateWindow("asd", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [object](const std::string &path)
-                    {
-                        strncpy(mesh_buffer, path.c_str(), 128);
-                        object->GetMesh()->LoadModel(mesh_buffer);
-                    }));
-                }
+                    object->GetMesh()->LoadModel(Platform::file_open());
 
                 if (ImGui::Button("Load"))
                     object->GetMesh()->LoadModel(mesh_buffer);
@@ -272,22 +292,25 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
             }
         }
 
-
     if (object->GetLight())
     {
         if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            auto color = object->GetLight()->GetColor();
+
+            float color[3] = {object->GetLight()->GetColor().x,
+                              object->GetLight()->GetColor().y,
+                              object->GetLight()->GetColor().z};
+
             auto linear = object->GetLight()->GetLinear();
             auto quadratic = object->GetLight()->GetQuadratic();
 
-            if (ImGui::ColorEdit3("Color", &color[0], ImGuiColorEditFlags_AlphaBar))
+            if (ImGui::ColorEdit3("Color", color, ImGuiColorEditFlags_AlphaBar))
                 object->GetLight()->SetColor(color);
 
-            if(ImGui::DragFloat("Linear value", &linear, 0.1f, 0.0f, 1000.0f, "%.3f"))
+            if (ImGui::DragFloat("Linear value", &linear, 0.005f, 0.0f, 1000.0f, "%.3f"))
                 object->GetLight()->SetLinear(linear);
 
-            if(ImGui::DragFloat("Quadratic value", &quadratic, 0.1f, 0.0f, 1000.0f, "%.3f"))
+            if (ImGui::DragFloat("Quadratic value", &quadratic, 0.005f, 0.0f, 1000.0f, "%.3f"))
                 object->GetLight()->SetQuadratic(quadratic);
         }
     }
@@ -298,9 +321,12 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
             ImGui::BeginChild("texture_child");
             static char texture_buffer[128] = {'\0'};
 
-            auto color = object->GetMaterial()->GetDiffuseColor();
-            if (ImGui::ColorEdit4("Diffuse Color", color, ImGuiColorEditFlags_AlphaBar))
-                object->GetMaterial()->SetDiffuseColor(color);
+            float color[4] = {object->GetMaterial()->GetDiffuseColor().x,
+                              object->GetMaterial()->GetDiffuseColor().y,
+                              object->GetMaterial()->GetDiffuseColor().z, 0};
+
+            if (ImGui::ColorEdit3("Diffuse Color", color, ImGuiColorEditFlags_AlphaBar))
+                object->GetMaterial()->SetDiffuseColor(glm::vec3(color[0], color[1], color[2]));
 
             float spec = object->GetMaterial()->GetSpecularPower() * 100;
             if (ImGui::DragFloat("Specular power", &spec, 1.0f, 0.0f, 100.0f, "%.0f"))
@@ -346,11 +372,7 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
                 ImGui::SameLine();
                 if (ImGui::Button("..."))
                 {
-                    GetUI().CreateWindow("Load diffuse", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [object](const std::string &path)
-                    {
-                        strncpy(texture_buffer, path.c_str(), 128);
-                        object->GetMaterial()->LoadDiffuse(texture_buffer);
-                    }));
+                    object->GetMaterial()->LoadDiffuse(Platform::file_open());
                 }
 
                 if (ImGui::Button("Load"))
@@ -364,13 +386,7 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
                 ImGui::InputText("Name", texture_buffer, IM_ARRAYSIZE(texture_buffer));
                 ImGui::SameLine();
                 if (ImGui::Button("..."))
-                {
-                    GetUI().CreateWindow("Load specular", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [object](const std::string &path)
-                    {
-                        strncpy(texture_buffer, path.c_str(), 128);
-                        object->GetMaterial()->LoadSpecular(texture_buffer);
-                    }));
-                }
+                    object->GetMaterial()->LoadSpecular(Platform::file_open());
 
                 if (ImGui::Button("Load"))
                     object->GetMaterial()->LoadSpecular(texture_buffer);
@@ -383,13 +399,7 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
                 ImGui::InputText("Name", texture_buffer, IM_ARRAYSIZE(texture_buffer));
                 ImGui::SameLine();
                 if (ImGui::Button("..."))
-                {
-                    GetUI().CreateWindow("Load normal", std::bind(&CEditor::ShowFileExplorer, std::placeholders::_1, [object](const std::string &path)
-                    {
-                        strncpy(texture_buffer, path.c_str(), 128);
-                        object->GetMaterial()->LoadNormal(texture_buffer);
-                    }));
-                }
+                    object->GetMaterial()->LoadNormal(Platform::file_open());
 
                 if (ImGui::Button("Load"))
                     object->GetMaterial()->LoadNormal(texture_buffer);
@@ -412,7 +422,7 @@ void CEditor::ShowObjectInspector(bool *p_open, CObject *object)
             if (ImGui::Selectable(component_names[i]))
             {
                 if (i == 0 && !object->GetSound3D())
-                    object->CreateSound3D(new Sound::CSound3D("data/test.mp3", false));
+                    object->CreateSound3D(new Sound::CSound3D());
 
                 if (i == 1 && !object->GetMesh())
                     object->CreateMesh(new Graphics::CMesh());
@@ -457,6 +467,7 @@ void CEditor::ShowFPS(bool *p_open)
         window_flags |= ImGuiWindowFlags_NoMove;
     if (ImGui::Begin("Overlay", p_open, window_flags))
     {
+        ImGui::Text("Frame time: %d", static_cast<int>(System::GetTimer().GetDelta()));
         ImGui::Text("FPS: %d", static_cast<int>(1000.0f / System::GetTimer().GetDelta()));
         /*ImGui::Separator();
         if (ImGui::IsMousePosValid())

@@ -33,7 +33,7 @@
 # Copyright 2012 Benjamin Eikel
 #
 # Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file Copyright.txt for details.
+# see https://cmake.org/licensing for details.
 #
 # This software is distributed WITHOUT ANY WARRANTY; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

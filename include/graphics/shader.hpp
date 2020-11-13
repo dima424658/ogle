@@ -19,13 +19,15 @@ namespace Graphics
         unsigned int GetID() const;
         
         void Set(const std::string_view& name, const glm::mat4& arg) const;
+        void Set(const std::string_view& name, const glm::vec2& arg) const;
         void Set(const std::string_view& name, const glm::vec3& arg) const;
         void Set(const std::string_view& name, const glm::vec4& arg) const;
+        void Set(const std::string_view& name, GLuint vector[4]) const;
         void Set(const std::string_view& name, GLfloat arg) const;
         void Set(const std::string_view& name, GLint arg) const;
         void Set(const std::string_view& name, GLuint arg) const;
         
     private:
-        unsigned int m_id;
+        GLuint m_id;
     };
 };

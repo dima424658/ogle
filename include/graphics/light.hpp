@@ -23,6 +23,13 @@ namespace Graphics
             m_color = color;
         }
 
+        void SetColor(const float color[3])
+        {
+            m_color.x = color[0];
+            m_color.y = color[1];
+            m_color.z = color[2];
+        }
+
         const glm::vec3 &GetColor() const
         {
             return m_color;

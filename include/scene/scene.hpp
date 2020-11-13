@@ -6,6 +6,8 @@
 #include <graphics/deferred.hpp>
 #include <graphics/ui.hpp>
 #include <system/input.hpp>
+#include <graphics/sprite.hpp>
+
 
 #include <list>
 #include <algorithm>
@@ -18,8 +20,8 @@
 #undef Bool
 #define RAPIDJSON_HAS_STDSTRING 1
 #include <rapidjson/document.h>
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
 template <typename Encoding>
 struct GenericRapidStream
@@ -60,6 +62,7 @@ public:
 	CObject *GetObject(const std::string_view &name);
 	CObject *GetObject(std::list<CObject>::iterator it);
 	CObject *GetObject(uint32_t id);
+	const CCamera& GetActiveCamera() const;
 
 	const std::list<CObject> &GetObjects() const;
 

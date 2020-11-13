@@ -12,11 +12,15 @@ namespace Graphics
     public:
         CDeferred(int width, int height);
         ~CDeferred();
-
     
         void Prepare() const;
         void Draw(const glm::vec3& cameraPosition) const;
         GLuint DrawToTexture(const glm::vec3& cameraPosition) const;
+        GLuint GetFinalbuffer() const;
+        GLuint GetPickingTexture() const;
+
+        // gets object id located at position
+        GLuint GetObjectID(int x, int y) const;
         
         void Resize(int width, int height);
 
@@ -39,7 +43,7 @@ namespace Graphics
         GLuint m_framebuffer, m_renderbuffer;
         GLuint m_finalbuffer, m_finalTexture;
 
-        GLuint m_texturePosition, m_texutreNormal, m_textureAlbedo;
+        GLuint m_texturePosition, m_texutreNormal, m_textureAlbedo, m_texturePicking;
 
         CShader m_gShader, m_diffuseShader;
 

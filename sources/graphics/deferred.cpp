@@ -3,7 +3,9 @@
 using namespace Graphics;
 
 CDeferred::CDeferred(int width, int height)
-    : m_width(width), m_height(height), m_gShader("shaders/gbuffer.vs", "shaders/gbuffer.fs"), m_diffuseShader("shaders/diffuse.vs", "shaders/diffuse.fs")
+    : m_width(width), m_height(height),
+    m_gShader("shaders/gbuffer.vs", "shaders/gbuffer.fs"),
+    m_diffuseShader("shaders/diffuse.vs", "shaders/diffuse.fs")
 {
     m_textureAlbedo = 0;
     m_texturePosition = 0;
@@ -12,7 +14,6 @@ CDeferred::CDeferred(int width, int height)
     ConfigureFramebuffer(m_width, m_height);
     ConfigureRenderbuffer(m_width, m_height);
     InitScreen();
-
 }
 
 CDeferred::~CDeferred()
@@ -44,12 +45,15 @@ void CDeferred::Draw(const glm::vec3& cameraPosition) const
     glBindTexture(GL_TEXTURE_2D, m_texutreNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, m_textureAlbedo);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, m_texturePicking);
 
     m_diffuseShader.Set("lightPos", glm::vec3(4.0f, 4.0f, 4.0f));
     m_diffuseShader.Set("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     m_diffuseShader.Set("viewPos", cameraPosition);
     
     RenderScreen();
+    throw;
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_framebuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -73,6 +77,8 @@ GLuint CDeferred::DrawToTexture(const glm::vec3& cameraPosition) const
     glBindTexture(GL_TEXTURE_2D, m_texutreNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, m_textureAlbedo);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, m_texturePicking);
 
     m_diffuseShader.Set("viewPos", cameraPosition);
 
@@ -83,13 +89,18 @@ GLuint CDeferred::DrawToTexture(const glm::vec3& cameraPosition) const
     return m_finalTexture;
 }
 
+GLuint CDeferred::GetFinalbuffer() const
+{
+    return m_finalbuffer;
+}
+
 void CDeferred::InitScreen()
 {
     float vertices[] = {
-        -1.0f,  1.0f, 0.0f,     0.0f, 1.0f,
-        -1.0f, -1.0f, 0.0f,     0.0f, 0.0f,
-         1.0f,  1.0f, 0.0f,     1.0f, 1.0f,
-         1.0f, -1.0f, 0.0f,     1.0f, 0.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
     };
     
     glGenVertexArrays(1, &m_screenVAO);
@@ -100,10 +111,7 @@ void CDeferred::InitScreen()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 }
 
 void CDeferred::RenderScreen() const
@@ -135,7 +143,10 @@ void CDeferred::ResizeFramebuffer(int width, int height)
     glBindTexture(GL_TEXTURE_2D, m_textureAlbedo);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glBindTexture(GL_TEXTURE_2D, 0);
-    
+
+    glBindTexture(GL_TEXTURE_2D, m_texturePicking);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glBindTexture(GL_TEXTURE_2D, 0);
     // Finalbuffer
     glBindFramebuffer(GL_FRAMEBUFFER, m_finalbuffer);
 
@@ -153,6 +164,7 @@ void CDeferred::ConfigureFramebuffer(int width, int height)
     glGenTextures(1, &m_texturePosition);
     glGenTextures(1, &m_texutreNormal);
     glGenTextures(1, &m_textureAlbedo);
+    glGenTextures(1, &m_texturePicking);
     
     glBindTexture(GL_TEXTURE_2D, m_texturePosition);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
@@ -173,8 +185,15 @@ void CDeferred::ConfigureFramebuffer(int width, int height)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_textureAlbedo, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    constexpr GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    glDrawBuffers(3, attachments);
+    glBindTexture(GL_TEXTURE_2D, m_texturePicking);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_texturePicking, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    constexpr GLuint attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+    glDrawBuffers(sizeof(attachments) / sizeof(GLuint), attachments);
     // Finalbuffer
     glGenFramebuffers(1, &m_finalbuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, m_finalbuffer);
@@ -222,6 +241,7 @@ void CDeferred::DestroyFramebuffer()
     glDeleteTextures(1, &m_texturePosition);
     glDeleteTextures(1, &m_texutreNormal);
     glDeleteTextures(1, &m_textureAlbedo);
+    glDeleteTextures(1, &m_texturePicking);
     // Finalbuffer
     glDeleteFramebuffers(1, &m_finalbuffer);
     glDeleteTextures(1, &m_finalTexture);
@@ -246,4 +266,25 @@ const CShader& CDeferred::GetGShader() const
 const CShader& CDeferred::GetDiffuseShader() const
 {
     return m_diffuseShader;
+}
+
+GLuint CDeferred::GetPickingTexture() const
+{
+    return m_texturePicking;
+}
+
+GLuint CDeferred::GetObjectID(int x, int y) const
+{
+    unsigned char pixel[4];
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+    glReadBuffer(GL_COLOR_ATTACHMENT3);
+    glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+
+    uint32_t result =   pixel[0] +
+                        pixel[1] * 256 +
+                        pixel[2] * 256 * 256 +
+                        pixel[3] * 256 * 256 * 256;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return result;
 }

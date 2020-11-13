@@ -55,6 +55,11 @@ inline FMOD_VECTOR operator*(const FMOD_VECTOR& l, float r)
     return { l.x * r, l.y * r, l.z * r };
 } 
 
+inline FMOD_VECTOR operator/(const FMOD_VECTOR& l, float r)
+{ 
+    return { l.x / r, l.y / r, l.z / r };
+} 
+
 inline FMOD_VECTOR toFMOD_VECTOR(const glm::vec3& o)
 {
     return { o.x, o.y, o.z };

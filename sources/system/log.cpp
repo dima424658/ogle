@@ -106,19 +106,19 @@ CLog& CLog::operator<< (char value) noexcept
 
 CLog& CLog::operator<< (float value) noexcept
 {
-    SendToStreams<float>(value);
+    SendToStreams<std::string>(std::to_string(value));
     return *this;
 }
 
 CLog& CLog::operator<< (int value) noexcept
 {
-    SendToStreams<int>(value);
+    SendToStreams<std::string>(std::to_string(value));
     return *this;
 }
 
 CLog& CLog::operator<< (unsigned int value) noexcept
 {
-    SendToStreams<unsigned int>(value);
+    SendToStreams<std::string>(std::to_string(value));
     return *this;
 }
 

@@ -1,6 +1,10 @@
 #pragma once
 
 #include <glad/glad.h>
+
+#include <graphics/OpenGL/Buffer.hpp>
+#include <graphics/OpenGL/VertexArray.hpp>
+
 #include <glm/glm.hpp>
 
 #include <string>
@@ -27,8 +31,6 @@ namespace Graphics
     public:
         CMesh();
         CMesh(std::string_view path);
-        CMesh(const CMesh&) = delete;
-        ~CMesh();
 
         void LoadModel(std::string_view path);
         const std::string& GetName() const;
@@ -43,6 +45,8 @@ namespace Graphics
         std::string m_name;
         std::string m_modelPath;
         std::vector<float> m_data;
-        GLuint m_VAO, m_VBO;
+
+        OpenGL::Buffer m_VBO;
+        OpenGL::VertexArray m_VAO;
     };
 }
